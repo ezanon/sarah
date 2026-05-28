@@ -2,8 +2,9 @@
 
 $admin = [
     [
-        'text' => '<i class="fas fa-atom"></i>  SubItem 1',
-        'url' => 'subitem1',
+        'text' => 'Salas',
+        'url'  => '/minhasala/admin', 
+        'icon' => 'bi-gear',
     ],
     [
         'text' => 'SubItem 2',
@@ -25,13 +26,33 @@ $admin = [
 
 $submenu2 = [
     [
-        'text' => 'SubItem 1',
-        'url' => 'subitem1',
+        'text' => 'Sala',
+        'url' => '/minhasala',
+        'icon' => 'bi-door-open',
     ],
     [
-        'text' => 'SubItem 2',
-        'url' => 'subitem2',
-        'can' => 'admin',
+        'text' => 'Veículos',
+        'url' => 'meusveiculos',
+    ],
+    [
+        'text' => 'Links',
+        'url' => 'meuslinks',
+    ],    
+    [
+        'text' => 'ODSs',
+        'url' => 'meusodss',
+    ],
+    [
+        'text' => 'Foto',
+        'url' => 'minhafotoalternativa',
+    ],
+    [
+        'text' => 'Pesq CNPq',
+        'url' => 'pesquisadorcnpq',
+    ],
+    [
+        'text' => 'Equipamentos',
+        'url' => 'equipamentos',
     ],
 ];
 
@@ -45,13 +66,8 @@ $menu = [
         'key' => 'menu_dinamico',
     ],
     [
-        'text' => 'Drop Down',
+        'text' => 'Meus Dados',
         'submenu' => $submenu2,
-        'can' => '',
-    ],
-    [
-        'text' => 'Está logado',
-        'url' => config('app.url') . '/logado', // com caminho absoluto
         'can' => 'user',
     ],
     [
@@ -60,7 +76,7 @@ $menu = [
         'can' => 'gerente',
     ],
     [
-        'text' => 'Menu admin',
+        'text' => 'Admin',
         'submenu' => $admin,
         'can' => 'admin',
     ],
