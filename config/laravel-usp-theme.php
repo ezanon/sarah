@@ -32,35 +32,32 @@ $submenu2 = [
     ],
     [
         'text' => 'Veículos',
-        'url' => 'meusveiculos',
+        'url' => '/meusveiculos',
+        'icon' => 'bi-car-front',
     ],
     [
         'text' => 'Links',
-        'url' => 'meuslinks',
+        'url' => '/meuslinks',
     ],    
     [
         'text' => 'ODSs',
-        'url' => 'meusodss',
+        'url' => '/meusodss',
     ],
     [
         'text' => 'Foto',
-        'url' => 'minhafotoalternativa',
+        'url' => '/minhafotoalternativa',
     ],
     [
         'text' => 'Pesq CNPq',
-        'url' => 'pesquisadorcnpq',
+        'url' => '/pesquisadorcnpq',
     ],
     [
         'text' => 'Equipamentos',
-        'url' => 'equipamentos',
+        'url' => '/equipamentos',
     ],
 ];
 
 $menu = [
-    [
-        'text' => '<i class="fas fa-home"></i> Home',
-        'url' => 'home',
-    ],
     [
         # este item de menu será substituido no momento da renderização
         'key' => 'menu_dinamico',
