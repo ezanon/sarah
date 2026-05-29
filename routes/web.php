@@ -6,6 +6,7 @@ use App\Http\Controllers\MinhaSalaController;
 use App\Http\Controllers\AdminSalaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VeiculoController;
+use App\Http\Controllers\LinkAcademicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,10 @@ Route::fallback(function(){
     Route::get('/meusveiculos', [VeiculoController::class, 'index'])->name('veiculos.index');
     Route::post('/meusveiculos', [VeiculoController::class, 'store'])->name('veiculos.store');
     Route::delete('/meusveiculos/{veiculo}', [VeiculoController::class, 'destroy'])->name('veiculos.destroy');
+    
+    Route::get('/links-academicos', [LinkAcademicoController::class, 'index'])->name('links-academicos.index');
+    Route::post('/links-academicos', [LinkAcademicoController::class, 'store'])->name('links-academicos.store');
+    Route::delete('/links-academicos/{linkAcademico}', [LinkAcademicoController::class, 'destroy'])->name('links-academicos.destroy');
     
 });
 

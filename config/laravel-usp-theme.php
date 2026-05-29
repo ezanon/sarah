@@ -36,8 +36,8 @@ $submenu2 = [
         'icon' => 'bi-car-front',
     ],
     [
-        'text' => 'Links',
-        'url' => '/meuslinks',
+        'text' => 'Links Acadêmicos',
+        'url' => '/links-academicos',
     ],    
     [
         'text' => 'ODSs',

@@ -98,6 +98,35 @@
                 @endif
             </div>
         </div>
+    
+{{-- Box: Links Acadêmicos --}}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-secondary">🔗 Links Acadêmicos</h5>
+        <a href="{{ route('links-academicos.index') }}" class="btn btn-sm btn-outline-primary">
+            {{ $links->isNotEmpty() ? 'Gerenciar' : 'Adicionar' }}
+        </a>
+    </div>
+    <div class="card-body">
+        @if($links->isNotEmpty())
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($links as $link)
+                    <a href="{{ $link->url }}" target="_blank" 
+                       class="badge badge-success text-white text-decoration-none px-3 py-2 fs-6 mr-1 mt-1 mb-1"
+                       title="{{ \App\Models\LinkAcademico::getPlataformas()[$link->plataforma]['nome'] }}">
+                        {{-- Ícone removido --}}
+                        {{ \App\Models\LinkAcademico::getPlataformas()[$link->plataforma]['nome'] }}
+                    </a>
+                @endforeach
+            </div>
+        @else
+            <p class="mb-0 text-muted">
+                Nenhum link acadêmico cadastrado. 
+                <a href="{{ route('links-academicos.index') }}" class="text-decoration-none">Adicione agora</a>.
+            </p>
+        @endif
+    </div>
+</div>
 
         {{-- Espaço para futuros resumos (links acadêmicos, etc.) --}}
         {{-- <div class="card shadow-sm border-0"> ... </div> --}}

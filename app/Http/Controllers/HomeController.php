@@ -15,6 +15,8 @@ class HomeController extends Controller
 
         $veiculos = Veiculo::where('user_id', auth()->id())->latest()->get();
 
-        return view('home', compact('minhaSala', 'veiculos'));
+        $links = \App\Models\LinkAcademico::where('user_id', auth()->id())->get();
+        
+        return view('home', compact('minhaSala', 'veiculos', 'links'));
     }
 }
