@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VeiculoController;
 use App\Http\Controllers\LinkAcademicoController;
 use App\Http\Controllers\OdsController;
+use App\Http\Controllers\CnpqController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,9 @@ Route::fallback(function(){
 
     Route::get('/minhas-ods', [OdsController::class, 'index'])->name('ods.index');
     Route::post('/minhas-ods', [OdsController::class, 'store'])->name('ods.store');
+    
+    Route::get('/meu-cnpq', [CnpqController::class, 'index'])->name('cnpq.index');
+    Route::post('/meu-cnpq', [CnpqController::class, 'store'])->name('cnpq.store');
 
 });
 

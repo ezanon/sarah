@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'password',
         'codpes',
+        'nivel_cnpq',
     ];
 
     /**

@@ -39,7 +39,12 @@ $submenu2 = [
         'text' => 'Links Acadêmicos',
         'url' => '/links-academicos',
         'icon' => 'bi-link-45deg',
-    ],    
+    ],      
+    [
+        'text' => 'Nível CNPq',
+        'url' => '/meu-cnpq',
+        'icon' => 'bi-award',
+    ],
     [
         'text' => 'ODS',
         'url' => '/minhas-ods',
@@ -48,10 +53,6 @@ $submenu2 = [
     [
         'text' => 'Foto',
         'url' => '/minhafotoalternativa',
-    ],
-    [
-        'text' => 'Pesq CNPq',
-        'url' => '/pesquisadorcnpq',
     ],
     [
         'text' => 'Equipamentos',

@@ -21,7 +21,9 @@ class HomeController extends Controller
         $minhasOds = OdsUsuario::where('user_id', auth()->id())->pluck('ods_id')->toArray();
         $odsList = \App\Http\Controllers\OdsController::ODS_LIST;
 
-        return view('home', compact('minhaSala', 'veiculos', 'links', 'minhasOds', 'odsList'));
+        $nivelCnpq = auth()->user()->nivel_cnpq ?? null;
+        
+        return view('home', compact('minhaSala', 'veiculos', 'links', 'minhasOds', 'odsList', 'nivelCnpq'));
         
     }
 }
