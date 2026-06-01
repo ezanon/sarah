@@ -127,6 +127,34 @@
         @endif
     </div>
 </div>
+    
+    
+        {{-- Box: Minhas ODS --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-secondary">🌍 Minhas ODS</h5>
+                <a href="{{ route('ods.index') }}" class="btn btn-sm btn-outline-primary">
+                    {{ count($minhasOds) > 0 ? 'Editar' : 'Selecionar' }}
+                </a>
+            </div>
+            <div class="card-body">
+                @if(count($minhasOds) > 0)
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($minhasOds as $id)
+                            @php $info = $odsList[$id]; @endphp
+                            <a href="{{ route('ods.index') }}" class="d-inline-block mx-1 mb-2" title="{{ $info['nome'] }}">
+                                <img src="{{ asset($info['img']) }}" alt="ODS {{ $id }}" style="max-height: 50px; width: auto;">
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="mb-0 text-muted">
+                        Nenhuma ODS selecionada. 
+                        <a href="{{ route('ods.index') }}" class="text-decoration-none">Selecione aqui</a> para alinhar seu trabalho aos objetivos globais.
+                    </p>
+                @endif
+            </div>
+        </div>
 
         {{-- Espaço para futuros resumos (links acadêmicos, etc.) --}}
         {{-- <div class="card shadow-sm border-0"> ... </div> --}}

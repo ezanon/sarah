@@ -38,10 +38,12 @@ $submenu2 = [
     [
         'text' => 'Links Acadêmicos',
         'url' => '/links-academicos',
+        'icon' => 'bi-link-45deg',
     ],    
     [
-        'text' => 'ODSs',
-        'url' => '/meusodss',
+        'text' => 'ODS',
+        'url' => '/minhas-ods',
+        'icon' => 'bi-globe-americas',
     ],
     [
         'text' => 'Foto',

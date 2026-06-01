@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminSalaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VeiculoController;
 use App\Http\Controllers\LinkAcademicoController;
+use App\Http\Controllers\OdsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,10 @@ Route::fallback(function(){
     Route::get('/links-academicos', [LinkAcademicoController::class, 'index'])->name('links-academicos.index');
     Route::post('/links-academicos', [LinkAcademicoController::class, 'store'])->name('links-academicos.store');
     Route::delete('/links-academicos/{linkAcademico}', [LinkAcademicoController::class, 'destroy'])->name('links-academicos.destroy');
-    
+
+    Route::get('/minhas-ods', [OdsController::class, 'index'])->name('ods.index');
+    Route::post('/minhas-ods', [OdsController::class, 'store'])->name('ods.store');
+
 });
 
 

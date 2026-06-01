@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 use App\Models\Sala;
 use App\Models\Veiculo;
+use App\Models\OdsUsuario;
 
 class HomeController extends Controller
 {
@@ -17,6 +18,10 @@ class HomeController extends Controller
 
         $links = \App\Models\LinkAcademico::where('user_id', auth()->id())->get();
         
-        return view('home', compact('minhaSala', 'veiculos', 'links'));
+        $minhasOds = OdsUsuario::where('user_id', auth()->id())->pluck('ods_id')->toArray();
+        $odsList = \App\Http\Controllers\OdsController::ODS_LIST;
+
+        return view('home', compact('minhaSala', 'veiculos', 'links', 'minhasOds', 'odsList'));
+        
     }
 }
