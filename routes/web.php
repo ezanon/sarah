@@ -22,6 +22,9 @@ use App\Http\Controllers\FotoController;
 // ROTAS PÚBLICAS (sem autenticação)
 // ═══════════════════════════════════════════════════════════════
 
+// Rota pública (a view já trata o @auth / @else)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 // Fallback 404 personalizado
 Route::fallback(function () {
     return view('errors.404');
@@ -31,11 +34,6 @@ Route::fallback(function () {
 // ROTAS PROTEGIDAS (requer autenticação)
 // ═══════════════════════════════════════════════════════════════
 Route::middleware('auth')->group(function () {
-    
-    // ─────────────────────────────────────────────────────────
-    // HOME
-    // ─────────────────────────────────────────────────────────
-    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     // ─────────────────────────────────────────────────────────
     // MINHA SALA (cadastro do usuário)
