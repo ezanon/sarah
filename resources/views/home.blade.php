@@ -55,6 +55,29 @@
                 @endif
             </div>
         </div>
+    
+        {{-- Box: Minha Foto --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-secondary">📷 Minha Foto Alternativa</h5>
+                <a href="{{ route('foto.index') }}" class="btn btn-sm btn-outline-primary">
+                    {{ $fotoCustomUrl ? 'Alterar' : 'Enviar' }}
+                </a>
+            </div>
+            <div class="card-body text-center">
+                @if($fotoCustomUrl)
+                    <img src="{{ $fotoCustomUrl }}" alt="Minha Foto" 
+                         class="img-thumbnail shadow-sm border-primary" style="max-height: 200px; width: auto;">
+                    <p class="text-muted small mt-2 mb-0">Foto atualizada no sistema SARaH</p>
+                @else
+                    <div class="py-4">
+                        <i class="bi bi-person-circle fs-1 text-muted mb-2 d-block"></i>
+                        <p class="text-muted mb-2">Nenhuma foto enviada ainda.</p>
+                        <a href="{{ route('foto.index') }}" class="btn btn-outline-primary btn-sm">Enviar minha foto</a>
+                    </div>
+                @endif
+            </div>
+        </div>
 
         {{-- Box: Minha Sala --}}
         <div class="card shadow-sm border-0 mb-4">
@@ -98,6 +121,8 @@
                 @endif
             </div>
         </div>
+    
+
     
         {{-- Box: Links Acadêmicos --}}
         <div class="card shadow-sm border-0 mb-4">

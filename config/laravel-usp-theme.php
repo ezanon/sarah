@@ -51,8 +51,9 @@ $submenu2 = [
         'icon' => 'bi-globe-americas',
     ],
     [
-        'text' => 'Foto',
-        'url' => '/minhafotoalternativa',
+        'text' => 'Foto Alternativa',
+        'url' => '/minha-foto',
+        'icon' => 'bi-camera',
     ],
     [
         'text' => 'Equipamentos',
