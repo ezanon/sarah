@@ -27,20 +27,20 @@ class ImportarUsuarios extends Command
 
     public function handle(): int
     {
-        $this->info(' Iniciando importação de usuários do Replicado para o SARaH...');
+        $this->info('🚀 Iniciando importação de usuários do Replicado para o SARaH...');
         $this->newLine();
 
         // Define as fontes a importar
         $fontes = [
             [
                 'nome'    => 'Docentes',
-                'metodo'  => fn() => Pessoa::listarDocentes(null, 'A,P'), // Ajustado conforme solicitado
+                'metodo'  => fn() => Pessoa::listarDocentes(null, 'A,P'),
                 'icone'   => '👨‍🏫',
             ],
             [
                 'nome'    => 'Pós-doutorandos',
                 'metodo'  => fn() => Pesquisa::listarPesquisaPosDoutorandos(),
-                'icone'   => '🔬',
+                'icone'   => '',
             ],
             [
                 'nome'    => 'Colaboradores ativos',
@@ -49,7 +49,7 @@ class ImportarUsuarios extends Command
             ],
             [
                 'nome'    => 'Pós-graduandos ativos',
-                'metodo'  => fn() => Posgraduacao::ativos(44), // 44 = Geociências
+                'metodo'  => fn() => Posgraduacao::ativos(44),
                 'icone'   => '',
             ],
         ];
@@ -114,7 +114,12 @@ class ImportarUsuarios extends Command
 
         foreach ($lista as $item) {
             $codpes = $item['codpes'] ?? null;
-            $nompes = $item['nompes'] ?? null;
+            
+            //  Ajuste: verifica múltiplos nomes de campo para o nome do usuário
+            $nompes = $item['nompes'] 
+                ?? $item['nome_aluno']   // Pós-doutorandos
+                ?? $item['pesquisador']  // Colaboradores
+                ?? null;
 
             if (!$codpes || !$nompes) {
                 $bar->advance();
