@@ -4,7 +4,7 @@
 
 ---
 
-## 📖 Sobre o SARaH
+##  Sobre o SARaH
 
 O **SARaH** é um sistema complementar desenvolvido pelo Instituto de Geociências da USP para registrar informações acadêmicas e pessoais dos docentes e pesquisadores que não estão disponíveis no sistema replicado oficial.
 
@@ -15,7 +15,7 @@ A ideia é simples: oferecer um espaço onde cada usuário possa manter atualiza
 ## ✨ O que o sistema oferece
 
 - 🏢 **Minha Sala** — registro da sala de trabalho, com administração de tipos, blocos e andares
-- 🚗 **Meus Veículos** — cadastro de carros e motos com validação automática de placas
+-  **Meus Veículos** — cadastro de carros e motos com validação automática de placas
 - 🔗 **Links Acadêmicos** — Lattes, ORCID, Google Scholar, Scopus, ResearchGate, ResearcherID e BV FAPESP, com geração automática de URLs a partir de identificadores
 - 🌍 **Minhas ODS** — seleção visual das 17 metas da ONU que seu trabalho contempla
 - 🎖️ **Nível CNPq** — registro da bolsa de produtividade em pesquisa vigente
@@ -28,6 +28,32 @@ No primeiro acesso, o SARaH já tenta preencher automaticamente seus links do La
 
 ---
 
+## 🛠️ Para Desenvolvedores
+
+### Popular a tabela de usuários
+
+O SARaH possui um comando Artisan dedicado para importar e sincronizar usuários diretamente do Replicado da USP. Isso permite pré-popular o banco de dados com docentes, pós-doutorandos, colaboradores e pós-graduandos antes mesmo do primeiro login via Senha Única.
+
+Para executar a importação, utilize o seguinte comando no terminal:
+
+```bash
+php artisan sarah:importar-usuarios
+```
+
+**O que este comando faz:**
+- Busca a lista de usuários ativos no Replicado (USP).
+- Cria ou atualiza os registros na tabela `users` (nome e email oficial).
+- Sincroniza automaticamente o ID Lattes e o ORCID na tabela de links acadêmicos.
+- Exibe um relatório detalhado no terminal com o número de criados, atualizados e eventuais erros.
+
+*(Opcional) Para manter o sistema sempre atualizado, você pode agendar a execução diária adicionando a linha abaixo no `app/Console/Kernel.php`:*
+
+```php
+$schedule->command('sarah:importar-usuarios')->dailyAt('03:00');
+```
+
+---
+
 ## 💡 Contribuições e sugestões
 
 O SARaH é um projeto em constante evolução. Sugestões de novas funcionalidades, ajustes ou melhorias são sempre bem-vindas.
@@ -37,5 +63,3 @@ O SARaH é um projeto em constante evolução. Sugestões de novas funcionalidad
 ## 📄 Licença
 
 Projeto desenvolvido para uso institucional no âmbito da Universidade de São Paulo.
-
----
