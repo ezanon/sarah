@@ -7,9 +7,9 @@ $admin = [
         'icon' => 'bi-gear',
     ],
     [
-        'text' => 'SubItem 2',
-        'url' =>  '/subitem2',
-        'can' => 'admin',
+        'text' => 'Centros/Labs',
+        'url'  => '/equipamentos/admin', 
+        'icon' => 'bi-hdd-network',
     ],
     [
         'type' => 'divider',

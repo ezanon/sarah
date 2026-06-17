@@ -51,4 +51,15 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\LinkAcademico::class);
     }
     
+    public function equipamentosCriados()
+    {
+        return $this->hasMany(Equipamento::class);
+    }
+
+    public function equipamentosResponsavel()
+    {
+        return $this->belongsToMany(Equipamento::class, 'equipamento_responsavel')
+            ->withTimestamps();
+    }
+    
 }
