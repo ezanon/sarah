@@ -9,6 +9,8 @@ use App\Http\Controllers\LinkAcademicoController;
 use App\Http\Controllers\OdsController;
 use App\Http\Controllers\CnpqController;
 use App\Http\Controllers\FotoController;
+use App\Http\Controllers\EquipamentoController;
+use App\Http\Controllers\AdminEquipamentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,6 +98,33 @@ Route::middleware('auth')->group(function () {
     Route::controller(FotoController::class)->group(function () {
         Route::get('/minha-foto', 'index')->name('foto.index');
         Route::post('/minha-foto', 'store')->name('foto.store');
+    });
+
+    
+    // ─────────────────────────────────────────────────────────
+    // EQUIPAMENTOS
+    // ─────────────────────────────────────────────────────────
+    Route::prefix('/equipamentos')->name('equipamentos.')->group(function () {
+        // Admin de Centros e Laboratórios
+        Route::prefix('/admin')->name('admin.')->group(function () {
+            Route::get('/', [AdminEquipamentoController::class, 'index'])->name('index');
+            Route::post('/centros', [AdminEquipamentoController::class, 'storeCentro'])->name('store.centro');
+            Route::post('/laboratorios', [AdminEquipamentoController::class, 'storeLaboratorio'])->name('store.laboratorio');
+            Route::delete('/centros/{centro}', [AdminEquipamentoController::class, 'destroyCentro'])->name('destroy.centro');
+            Route::delete('/laboratorios/{laboratorio}', [AdminEquipamentoController::class, 'destroyLaboratorio'])->name('destroy.laboratorio');
+        });
+
+        // CRUD de Equipamentos
+        Route::get('/', [EquipamentoController::class, 'index'])->name('index');
+        Route::get('/criar', [EquipamentoController::class, 'create'])->name('create');
+        Route::post('/', [EquipamentoController::class, 'store'])->name('store');
+        Route::get('/{equipamento}', [EquipamentoController::class, 'show'])->name('show');
+        Route::get('/{equipamento}/editar', [EquipamentoController::class, 'edit'])->name('edit');
+        Route::put('/{equipamento}', [EquipamentoController::class, 'update'])->name('update');
+        Route::delete('/{equipamento}', [EquipamentoController::class, 'destroy'])->name('destroy');
+        
+        // Busca de patrimônio no Replicado (AJAX)
+        Route::get('/buscar-patrimonio', [EquipamentoController::class, 'buscarPatrimonio'])->name('buscar.patrimonio');
     });
 
 });
