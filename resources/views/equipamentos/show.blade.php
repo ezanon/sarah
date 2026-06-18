@@ -72,7 +72,7 @@
                         <ul class="list-group">
                             @foreach($equipamento->responsaveis as $resp)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{{ $resp->name }} <span class="badge bg-secondary">USP: {{ $resp->codpes }}</span></span>
+                                    <span>{{ $resp->name }} <span class="badge bg-primary text-white">USP: {{ $resp->codpes }}</span></span>
                                 </li>
                             @endforeach
                         </ul>

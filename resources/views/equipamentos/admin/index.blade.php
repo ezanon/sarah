@@ -4,7 +4,6 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3> Gerenciar Centros e Laboratórios</h3>
-        <a href="{{ route('equipamentos.index') }}" class="btn btn-outline-secondary">← Voltar para Equipamentos</a>
     </div>
 
     @if(session('success'))
@@ -42,10 +41,10 @@
                         @forelse($centros as $centro)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <strong>{{ $centro->nome }}</strong>
                                     @if($centro->sigla)
-                                        <span class="badge bg-secondary ms-2">{{ $centro->sigla }}</span>
+                                    <span class="badge bg-primary text-white ms-2">{{ $centro->sigla }}</span><br>
                                     @endif
+                                    {{ $centro->nome }}
                                     <br>
                                     <small class="text-muted">{{ $centro->laboratorios->count() }} laboratório(s)</small>
                                 </div>
@@ -86,28 +85,31 @@
                         </div>
                     </form>
 
-                    <ul class="list-group">
-                        @forelse($centros as $centro)
-                            @foreach($centro->laboratorios as $lab)
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>{{ $lab->nome }}</strong>
-                                        @if($lab->sigla)
-                                            <span class="badge bg-secondary ms-2">{{ $lab->sigla }}</span>
-                                        @endif
-                                        <br>
-                                        <small class="text-muted">{{ $centro->nome }}</small>
-                                    </div>
-                                    <form action="{{ route('equipamentos.admin.destroy.laboratorio', $lab) }}" method="POST" onsubmit="return confirm('Excluir este laboratório?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                                    </form>
-                                </li>
-                            @endforeach
-                        @empty
-                            <li class="list-group-item text-muted">Nenhum laboratório cadastrado.</li>
-                        @endforelse
-                    </ul>
+<ul class="list-group">
+    @forelse($centros as $centro)
+        @foreach($centro->laboratorios as $lab)
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="mb-1">
+                        @if($centro->sigla)
+                            <span class="badge bg-primary text-white me-1">{{ $centro->sigla }}</span>
+                        @endif
+                        @if($lab->sigla)
+                            <span class="badge bg-success text-white">{{ $lab->sigla }}</span>
+                        @endif
+                    </div>
+                    <div>{{ $lab->nome }}</div>
+                </div>
+                <form action="{{ route('equipamentos.admin.destroy.laboratorio', $lab) }}" method="POST" onsubmit="return confirm('Excluir este laboratório?')">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                </form>
+            </li>
+        @endforeach
+    @empty
+        <li class="list-group-item text-muted">Nenhum laboratório cadastrado.</li>
+    @endforelse
+</ul>
                 </div>
             </div>
         </div>

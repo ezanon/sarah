@@ -28,7 +28,7 @@
                         <h5 class="card-title">{{ $eq->nome }}</h5>
                         <p class="text-muted small mb-1">
                             <strong>Lab:</strong> {{ $eq->laboratorio->nome }} 
-                            @if($eq->laboratorio->centro) <span class="badge bg-secondary">{{ $eq->laboratorio->centro->sigla }}</span> @endif
+                            @if($eq->laboratorio->centro) <span class="badge bg-primary text-white">{{ $eq->laboratorio->centro->sigla }}</span> @endif
                         </p>
                         @if($eq->patrimonio)
                             <p class="small mb-1"><strong>Patrimônio:</strong> {{ $eq->patrimonio }}</p>
