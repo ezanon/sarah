@@ -86,9 +86,37 @@
 </div>
 
 <div class="mb-3">
-    <label class="form-label fw-bold">Responsáveis (Codpes)</label>
-    <textarea name="responsaveis_codpes" class="form-control" rows="2" placeholder="Digite os números USP separados por vírgula (Ex: 123456, 789012)">{{ old('responsaveis_codpes', isset($equipamento) ? $equipamento->responsaveis->pluck('codpes')->implode(', ') : '') }}</textarea>
-    <div class="form-text">Usuários listados aqui poderão editar e excluir este equipamento.</div>
+    <label class="form-label fw-bold">Responsáveis (Número USP)</label>
+
+    {{-- 📋 Visualização dos responsáveis atuais (Apenas na tela de Edição) --}}
+    @if(isset($equipamento) && $equipamento->responsaveis->count() > 0)
+        <div class="mb-2 p-3 bg-light rounded border">
+            <small class="text-muted d-block mb-2 fw-medium"> Responsáveis atuais:</small>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($equipamento->responsaveis as $resp)
+                    <span class="badge bg-primary text-white ml-1 d-flex align-items-center gap-1 py-2 px-3">
+                        <span class="fw-bold">({{ $resp->codpes }}) </span>{{ $resp->name }}
+                    </span>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    {{-- 📝 Campo de entrada (Textarea) --}}
+    <textarea 
+        name="responsaveis_codpes" 
+        class="form-control @error('responsaveis_codpes') is-invalid @enderror" 
+        rows="2" 
+        placeholder="Digite os números USP separados por vírgula (Ex: 123456, 789012)"
+    >{{ old('responsaveis_codpes', isset($equipamento) ? $equipamento->responsaveis->pluck('codpes')->implode(', ') : auth()->user()->codpes) }}</textarea>
+    
+    <div class="form-text">
+        @if(!isset($equipamento))
+            ✅ Seu número USP foi preenchido automaticamente como responsável principal.<br>
+        @endif
+            Adicione ou remova números USP <strong>separados por vírgula</strong> para atualizar a lista acima.
+    </div>
+    @error('responsaveis_codpes') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 
 @push('scripts')
