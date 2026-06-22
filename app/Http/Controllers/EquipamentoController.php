@@ -13,8 +13,16 @@ class EquipamentoController extends Controller
 {
     public function index()
     {
-        // Lista todos os equipamentos, carregando laboratório e centro
+        $user = auth()->user();
+
+        // Busca apenas os equipamentos onde o usuário é o criador OU é um dos responsáveis
         $equipamentos = Equipamento::with(['laboratorio.centro', 'criador', 'responsaveis'])
+            ->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhereHas('responsaveis', function($q) use ($user) {
+                          $q->where('user_id', $user->id);
+                      });
+            })
             ->latest()
             ->get();
 

@@ -6,10 +6,10 @@
         <h3>🔬 {{ $equipamento->nome }}</h3>
         @if($equipamento->podeEditar(auth()->user()))
             <div>
-                <a href="{{ route('equipamentos.edit', $equipamento) }}" class="btn btn-warning">✏️ Editar</a>
+                <a href="{{ route('equipamentos.edit', $equipamento) }}" class="btn btn-warning mb-1">Editar</a>
                 <form action="{{ route('equipamentos.destroy', $equipamento) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este equipamento?')">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-danger">️ Excluir</button>
+                    <button type="submit" class="btn btn-danger mb-1">️ Excluir</button>
                 </form>
             </div>
         @endif
@@ -51,7 +51,17 @@
                 <div class="card-body">
                     <h5 class="card-title text-primary">Informações Gerais</h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Centro/Laboratório:</strong> {{ $equipamento->laboratorio->centro->nome ?? '-' }} / {{ $equipamento->laboratorio->nome }}</li>
+                        <li class="list-group-item">
+                            <div class="mb-1">
+                                @if($equipamento->laboratorio->centro->sigla)
+                                    <span class="badge bg-primary text-white me-1">{{ $equipamento->laboratorio->centro->sigla }}</span>
+                                @endif
+                                @if($equipamento->laboratorio->sigla)
+                                    <span class="badge bg-success text-white">{{ $equipamento->laboratorio->sigla }}</span>
+                                @endif
+                            </div>
+                            <div>{{ $equipamento->laboratorio->nome }}</div>
+                        </li>
                         <li class="list-group-item"><strong>Marca/Modelo:</strong> {{ $equipamento->marca ?? '-' }} {{ $equipamento->modelo ? '(' . $equipamento->modelo . ')' : '' }}</li>
                         <li class="list-group-item"><strong>Patrimônio:</strong> {{ $equipamento->patrimonio ?? 'Não informado' }}</li>
                         <li class="list-group-item"><strong>Ano Aquisição:</strong> {{ $equipamento->ano_aquisicao ?? '-' }}</li>

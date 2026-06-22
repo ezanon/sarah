@@ -18,10 +18,15 @@
         @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-4 mb-3">
-        <label class="form-label fw-bold">Nº Patrimônio</label>
+        <label class="form-label fw-bold">Nº Patrimônio (000.000000)</label>
         <div class="input-group">
-            <input type="text" id="patrimonio" name="patrimonio" class="form-control @error('patrimonio') is-invalid @enderror" value="{{ old('patrimonio', $equipamento->patrimonio ?? '') }}" placeholder="Ex: 1234567">
-            <button type="button" class="btn btn-outline-primary" id="btn-buscar-patrimonio"> Buscar</button>
+            <input type="text" id="patrimonio" name="patrimonio" class="form-control @error('patrimonio') is-invalid @enderror" 
+                   value="{{ old('patrimonio', $equipamento->patrimonio ?? '') }}" 
+                   placeholder="000.000000" 
+                   maxlength="10"
+                   pattern="\d{3}\.\d{6}"
+                   style="font-family: monospace; letter-spacing: 2px;">
+            <button type="button" class="btn btn-outline-primary" id="btn-buscar-patrimonio">🔍 Buscar</button>
         </div>
         <div id="patrimonio-feedback" class="form-text"></div>
         @error('patrimonio') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -121,6 +126,27 @@
 
 @push('scripts')
 <script>
+// 🎭 Máscara para o campo Patrimônio (formato: 999.999999)
+document.addEventListener('DOMContentLoaded', function() {
+    const inputPatrimonio = document.getElementById('patrimonio');
+    
+    if (inputPatrimonio) {
+        inputPatrimonio.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            if (valor.length > 9) valor = valor.substring(0, 9); // Limita a 9 dígitos
+            
+            // Aplica a máscara: 3 dígitos + ponto + até 6 dígitos
+            if (valor.length > 3) {
+                valor = valor.substring(0, 3) + '.' + valor.substring(3);
+            }
+            
+            e.target.value = valor;
+        });
+    }
+});
+    
+// 🔍 Busca de patrimônio no Replicado    
 document.getElementById('btn-buscar-patrimonio').addEventListener('click', async function() {
     const patrimonio = document.getElementById('patrimonio').value;
     const feedback = document.getElementById('patrimonio-feedback');
