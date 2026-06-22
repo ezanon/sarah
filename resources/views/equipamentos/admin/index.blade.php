@@ -71,10 +71,10 @@
                     <form action="{{ route('equipamentos.admin.store.laboratorio') }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-2">
-                            <select name="centro_id" class="form-select" required>
+                            <select name="centro_id" class="form-select form-select-lg" required>
                                 <option value="">Selecione o centro...</option>
                                 @foreach($centros as $centro)
-                                    <option value="{{ $centro->id }}">{{ $centro->nome }}</option>
+                                    <option value="{{ $centro->id }}">{{ $centro->sigla ?? $centro->nome }}</option>
                                 @endforeach
                             </select>
                         </div>
