@@ -123,36 +123,44 @@ class EquipamentoController extends Controller
     /**
      * Endpoint AJAX para buscar dados do Replicado via Patrimônio
      */
-    public function buscarPatrimonio(Request $request)
-    {
-        $patrimonio = $request->query('patrimonio');
-        
-        if (!$patrimonio) {
-            return response()->json(['error' => 'Patrimônio não informado'], 400);
-        }
-
-        try {
-            $fields = ['anoorc', 'coddocmovvba', 'epfmarpat', 'modpat', 'vlravlbem'];
-            $data = Bempatrimoniado::dump($patrimonio, $fields);
-
-            if (empty($data)) {
-                return response()->json(['error' => 'Patrimônio não encontrado no Replicado'], 404);
-            }
-
-            // O dump retorna um array associativo ou lista
-            $bem = $data[0] ?? $data;
-
-            return response()->json([
-                'ano_incorporacao' => $bem['anoorc'] ?? null,
-                'cod_processo_incorporacao' => $bem['coddocmovvba'] ?? null,
-                'marca' => $bem['epfmarpat'] ?? null,
-                'modelo' => $bem['modpat'] ?? null,
-                'valor' => $bem['vlravlbem'] ?? null,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao buscar no Replicado: ' . $e->getMessage()], 500);
-        }
+public function buscarPatrimonio(Request $request)
+{
+    $patrimonio = $request->query('patrimonio');
+    
+    if (!$patrimonio) {
+        return response()->json(['error' => 'Patrimônio não informado'], 400);
     }
+
+    // Remove ponto e qualquer caractere não numérico
+    $patrimonio = preg_replace('/\D/', '', $patrimonio);
+
+    if (empty($patrimonio)) {
+        return response()->json(['error' => 'Patrimônio inválido'], 400);
+    }
+
+    try {
+        $fields = ['anoorc', 'coddocmovvba', 'epfmarpat', 'modpat', 'vlravlbem', 'vlrbem', 'dsccplbem'];
+        $data = Bempatrimoniado::dump($patrimonio, $fields);
+
+        // O dump() retorna um array, pegamos o primeiro elemento
+        $bem = is_array($data) ? ($data[0] ?? $data) : $data;
+
+        // Mapeia os campos do Replicado para o formato esperado
+        return response()->json([
+            'ano_incorporacao' => $bem['anoorc'] ?? null,
+            'cod_processo_incorporacao' => $bem['coddocmovvba'] ?? null,
+            'marca' => $bem['epfmarpat'] ?? null,
+            'modelo' => $bem['modpat'] ?? null, // Apenas o modelo original
+            'cod_processo_convenio' => $bem['dsccplbem'] ?? null,
+            'valor' => isset($bem['vlravlbem']) ? (float) $bem['vlravlbem'] : (isset($bem['vlrbem']) ? (float) $bem['vlrbem'] : null),
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Erro ao buscar no Replicado: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 
     // --- Métodos Privados Auxiliares ---
 

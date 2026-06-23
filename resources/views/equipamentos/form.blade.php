@@ -1,22 +1,4 @@
-<div class="mb-3">
-    <label class="form-label fw-bold">Laboratório *</label>
-    <select name="laboratorio_id" class="form-select form-select-lg @error('laboratorio_id') is-invalid @enderror" required>
-        <option value="">Selecione o laboratório...</option>
-        @foreach($laboratorios as $lab)
-            <option value="{{ $lab->id }}" {{ (old('laboratorio_id', $equipamento->laboratorio_id ?? '') == $lab->id) ? 'selected' : '' }}>
-                {{ $lab->centro->sigla ?? '-' }} ({{ $lab->sigla ?? 'sem sigla' }}) {{ $lab->nome }}
-            </option>
-        @endforeach
-    </select>
-    @error('laboratorio_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-</div>
-
 <div class="row">
-    <div class="col-md-8 mb-3">
-        <label class="form-label fw-bold">Nome do Equipamento *</label>
-        <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror" value="{{ old('nome', $equipamento->nome ?? '') }}" required>
-        @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
     <div class="col-md-4 mb-3">
         <label class="form-label fw-bold">Nº Patrimônio (000.000000)</label>
         <div class="input-group">
@@ -31,6 +13,33 @@
         <div id="patrimonio-feedback" class="form-text"></div>
         @error('patrimonio') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
+    
+    <div class="col-md-8 mb-3">
+        <label class="form-label fw-bold">Nome do Equipamento *</label>
+        <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror" value="{{ old('nome', $equipamento->nome ?? '') }}" required>
+        @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+</div>
+
+<div class="mb-3">
+    
+    <div id="aviso-preenchimento-automatico" class="alert alert-light border-start border-primary border-3 py-2 mt-0 mb-3" role="alert" style="display: none;">
+        <small class="text-muted">
+            💡 <strong>Dica:</strong> Os dados preenchidos automaticamente pela busca de patrimônio podem ser editados manualmente caso julgue necessário.
+        </small>
+    </div>
+    
+    <label class="form-label fw-bold">Laboratório *</label>
+    <select name="laboratorio_id" class="form-select form-select-lg @error('laboratorio_id') is-invalid @enderror" required>
+        <option value="">Selecione o laboratório...</option>
+        @foreach($laboratorios as $lab)
+            <option value="{{ $lab->id }}" {{ (old('laboratorio_id', $equipamento->laboratorio_id ?? '') == $lab->id) ? 'selected' : '' }}>
+                {{ $lab->centro->sigla ?? '-' }} ({{ $lab->sigla ?? 'sem sigla' }}) {{ $lab->nome }}
+            </option>
+        @endforeach
+    </select>
+    @error('laboratorio_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    
 </div>
 
 <div class="row">
@@ -96,7 +105,7 @@
     {{-- 📋 Visualização dos responsáveis atuais (Apenas na tela de Edição) --}}
     @if(isset($equipamento) && $equipamento->responsaveis->count() > 0)
         <div class="mb-2 p-3 bg-light rounded border">
-            <small class="text-muted d-block mb-2 fw-medium"> Responsáveis atuais:</small>
+            <small class="text-muted d-block mb-2 fw-medium">👥 Responsáveis atuais:</small>
             <div class="d-flex flex-wrap gap-2">
                 @foreach($equipamento->responsaveis as $resp)
                     <span class="badge bg-primary text-white ml-1 d-flex align-items-center gap-1 py-2 px-3">
@@ -124,7 +133,7 @@
     @error('responsaveis_codpes') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 
-@push('scripts')
+{{-- 🎭 Script inline (sem @push) --}}
 <script>
 // 🎭 Máscara para o campo Patrimônio (formato: 999.999999)
 document.addEventListener('DOMContentLoaded', function() {
@@ -132,11 +141,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (inputPatrimonio) {
         inputPatrimonio.addEventListener('input', function(e) {
-            let valor = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            let valor = e.target.value.replace(/\D/g, '');
             
-            if (valor.length > 9) valor = valor.substring(0, 9); // Limita a 9 dígitos
+            if (valor.length > 9) valor = valor.substring(0, 9);
             
-            // Aplica a máscara: 3 dígitos + ponto + até 6 dígitos
             if (valor.length > 3) {
                 valor = valor.substring(0, 3) + '.' + valor.substring(3);
             }
@@ -145,47 +153,83 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-    
-// 🔍 Busca de patrimônio no Replicado    
-document.getElementById('btn-buscar-patrimonio').addEventListener('click', async function() {
-    const patrimonio = document.getElementById('patrimonio').value;
+
+// 🔍 Busca de patrimônio no Replicado
+document.addEventListener('DOMContentLoaded', function() {
+    const btnBuscar = document.getElementById('btn-buscar-patrimonio');
+    const inputPatrimonio = document.getElementById('patrimonio');
     const feedback = document.getElementById('patrimonio-feedback');
-    const btn = this;
+    const aviso = document.getElementById('aviso-preenchimento-automatico');
+    
+    if (!btnBuscar || !inputPatrimonio) return;
+    
+    btnBuscar.addEventListener('click', async function() {
+        const patrimonio = inputPatrimonio.value;
 
-    if (!patrimonio) {
-        feedback.textContent = 'Digite um número de patrimônio.';
-        feedback.className = 'form-text text-warning';
-        return;
-    }
-
-    btn.disabled = true;
-    feedback.textContent = 'Buscando no Replicado...';
-    feedback.className = 'form-text text-info';
-
-    try {
-        const response = await fetch(`/equipamentos/buscar-patrimonio?patrimonio=${encodeURIComponent(patrimonio)}`);
-        const data = await response.json();
-
-        if (response.ok) {
-            // Preenche os campos
-            if(data.ano_incorporacao) document.querySelector('input[name="ano_incorporacao"]').value = data.ano_incorporacao;
-            if(data.cod_processo_incorporacao) document.querySelector('input[name="cod_processo_incorporacao"]').value = data.cod_processo_incorporacao;
-            if(data.marca) document.querySelector('input[name="marca"]').value = data.marca;
-            if(data.modelo) document.querySelector('input[name="modelo"]').value = data.modelo;
-            if(data.valor) document.querySelector('input[name="valor"]').value = data.valor;
-            
-            feedback.textContent = 'Dados preenchidos automaticamente!';
-            feedback.className = 'form-text text-success';
-        } else {
-            feedback.textContent = data.error || 'Erro na busca.';
-            feedback.className = 'form-text text-danger';
+        if (!patrimonio) {
+            feedback.textContent = '⚠️ Digite um número de patrimônio.';
+            feedback.className = 'form-text text-warning';
+            return;
         }
-    } catch (e) {
-        feedback.textContent = 'Erro de conexão.';
-        feedback.className = 'form-text text-danger';
-    } finally {
-        btn.disabled = false;
-    }
+
+        btnBuscar.disabled = true;
+        btnBuscar.textContent = '⏳ Buscando...';
+        feedback.textContent = '🔍 Buscando no Replicado...';
+        feedback.className = 'form-text text-info';
+
+        try {
+            const url = `/equipamentos/buscar-patrimonio?patrimonio=${encodeURIComponent(patrimonio)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok) {
+                // Preenche os campos retornados
+                if (data.ano_incorporacao) {
+                    document.querySelector('input[name="ano_incorporacao"]').value = data.ano_incorporacao;
+                }
+                if (data.cod_processo_incorporacao) {
+                    document.querySelector('input[name="cod_processo_incorporacao"]').value = data.cod_processo_incorporacao;
+                }
+                if (data.marca) {
+                    document.querySelector('input[name="marca"]').value = data.marca;
+                }
+                if (data.modelo) {
+                    document.querySelector('input[name="modelo"]').value = data.modelo;
+                }
+                if (data.cod_processo_convenio) {
+                    document.querySelector('input[name="cod_processo_convenio"]').value = data.cod_processo_convenio;
+                }
+                if (data.valor) {
+                    document.querySelector('input[name="valor"]').value = data.valor;
+                }
+                
+                // Exibe o aviso de que os dados podem ser editados
+                if (aviso) {
+                    aviso.style.display = 'block';
+                }
+                
+                feedback.textContent = '✅ Dados preenchidos automaticamente!';
+                feedback.className = 'form-text text-success';
+            } else {
+                // Em caso de erro, mantém o aviso oculto
+                if (aviso) {
+                    aviso.style.display = 'none';
+                }
+                
+                feedback.textContent = data.error || '❌ Erro na busca.';
+                feedback.className = 'form-text text-danger';
+            }
+        } catch (e) {
+            if (aviso) {
+                aviso.style.display = 'none';
+            }
+            
+            feedback.textContent = '❌ Erro de conexão: ' + e.message;
+            feedback.className = 'form-text text-danger';
+        } finally {
+            btnBuscar.disabled = false;
+            btnBuscar.textContent = '🔍 Buscar';
+        }
+    });
 });
 </script>
-@endpush
