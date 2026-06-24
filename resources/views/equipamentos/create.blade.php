@@ -10,7 +10,7 @@
                 @include('equipamentos.form')
                 <div class="d-flex justify-content-end gap-2 mt-4">
                     <a href="{{ route('equipamentos.index') }}" class="btn btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-primary">Salvar Equipamento</button>
+                    <button type="submit" class="btn btn-primary ml-1">Salvar Equipamento</button>
                 </div>
             </form>
         </div>

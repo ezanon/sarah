@@ -11,7 +11,7 @@
                 @include('equipamentos.form')
                 <div class="d-flex justify-content-end gap-2 mt-4">
                     <a href="{{ route('equipamentos.show', $equipamento) }}" class="btn btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-success">Atualizar Equipamento</button>
+                    <button type="submit" class="btn btn-success ml-1">Atualizar Equipamento</button>
                 </div>
             </form>
         </div>

@@ -26,10 +26,18 @@
                     @endif
                     <div class="card-body">
                         <h5 class="card-title">{{ $eq->nome }}</h5>
-                        <p class="text-muted small mb-1">
-                            <strong>Lab:</strong> {{ $eq->laboratorio->nome }} 
-                            @if($eq->laboratorio->centro) <span class="badge bg-secondary">{{ $eq->laboratorio->centro->sigla }}</span> @endif
-                        </p>
+
+                        {{-- Badges do Centro e Laboratório --}}
+                        <div class="mb-1">
+                            @if($eq->laboratorio->centro->sigla)
+                                <span class="badge bg-primary text-white me-1">{{ $eq->laboratorio->centro->sigla }}</span>
+                            @endif
+                            @if($eq->laboratorio->sigla)
+                                <span class="badge bg-success text-white">{{ $eq->laboratorio->sigla }}</span>
+                            @endif
+                        </div>
+                        <p class="text-muted small mb-2">{{ $eq->laboratorio->nome }}</p>
+
                         @if($eq->patrimonio)
                             <p class="small mb-1"><strong>Patrimônio:</strong> {{ $eq->patrimonio }}</p>
                         @endif

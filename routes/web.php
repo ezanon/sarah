@@ -118,13 +118,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [EquipamentoController::class, 'index'])->name('index');
         Route::get('/criar', [EquipamentoController::class, 'create'])->name('create');
         Route::post('/', [EquipamentoController::class, 'store'])->name('store');
+
+        // ⚠️ IMPORTANTE: Rotas com caminhos fixos devem vir ANTES das rotas com parâmetros
+        Route::get('/buscar-patrimonio', [EquipamentoController::class, 'buscarPatrimonio'])->name('buscar.patrimonio');
+
+        // Rotas com parâmetros dinâmicos (devem vir por último)
         Route::get('/{equipamento}', [EquipamentoController::class, 'show'])->name('show');
         Route::get('/{equipamento}/editar', [EquipamentoController::class, 'edit'])->name('edit');
         Route::put('/{equipamento}', [EquipamentoController::class, 'update'])->name('update');
         Route::delete('/{equipamento}', [EquipamentoController::class, 'destroy'])->name('destroy');
-        
-        // Busca de patrimônio no Replicado (AJAX)
-        Route::get('/buscar-patrimonio', [EquipamentoController::class, 'buscarPatrimonio'])->name('buscar.patrimonio');
     });
 
 });

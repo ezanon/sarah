@@ -201,8 +201,60 @@
             </div>
         </div>
 
-        {{-- Espaço para futuros resumos (links acadêmicos, etc.) --}}
-        {{-- <div class="card shadow-sm border-0"> ... </div> --}}
+        {{-- EQUIPAMENTOS --}}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">🔬 Meus Equipamentos de Grande Porte</h5>
+                <a href="{{ route('equipamentos.index') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+            </div>
+            <div class="card-body">
+                @if($equipamentos->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Patrimônio</th>
+                                    <th>Local</th>
+                                    <th>Equipamento</th>
+                                    <th>Ano</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($equipamentos as $eq)
+                                    <tr>
+                                        <td>
+                                            @if($eq->patrimonio)
+                                                <span class="badge bg-light text-dark border">{{ $eq->patrimonio }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if($eq->laboratorio->centro->sigla)
+                                                    <span class="badge bg-primary text-white">{{ $eq->laboratorio->centro->sigla }}</span>
+                                                @endif
+                                                @if($eq->laboratorio->sigla)
+                                                    <span class="badge bg-success text-white" style="margin-left: 1px;">{{ $eq->laboratorio->sigla }}</span>
+                                                @endif
+                                            </div>
+                                        </td>
+                                        <td>{{ $eq->nome }}</td>
+                                        <td>{{ $eq->ano_aquisicao ?? '-' }}</td>
+                                        <td>
+                                            <a href="{{ route('equipamentos.edit', $eq) }}" class="btn btn-sm btn-outline-secondary" title="Editar">✏️</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-muted mb-0">Nenhum equipamento cadastrado.</p>
+                @endif
+            </div>
+        </div>
 
     @else
         {{-- Não autenticado --}}
