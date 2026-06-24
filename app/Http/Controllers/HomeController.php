@@ -50,10 +50,22 @@ class HomeController extends Controller
                 }
             }
         }
+        
+            // Busca os equipamentos do usuário (criador ou responsável)
+            $equipamentos = \App\Models\Equipamento::with(['laboratorio.centro'])
+                ->where(function($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                          ->orWhereHas('responsaveis', function($q) use ($user) {
+                              $q->where('user_id', $user->id);
+                          });
+                })
+                ->latest()
+                ->take(5) // Limita a 5 equipamentos mais recentes
+                ->get();
 
         return view('home', compact(
             'minhaSala', 'veiculos', 'links', 'minhasOds', 'odsList', 
-            'nivelCnpq', 'fotoCustomUrl'
+            'nivelCnpq', 'fotoCustomUrl', 'equipamentos'
         ));
     }
     
