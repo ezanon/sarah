@@ -202,9 +202,9 @@
         </div>
 
         {{-- EQUIPAMENTOS --}}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">🔬 Meus Equipamentos de Grande Porte</h5>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-secondary">🔬 Meus Equipamentos de Grande Porte</h5>
                 <a href="{{ route('equipamentos.index') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
             </div>
             <div class="card-body">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Centro;
 use App\Models\Laboratorio;
+use App\Models\Equipamento; 
 use Illuminate\Http\Request;
 
 class AdminEquipamentoController extends Controller
@@ -54,4 +55,23 @@ class AdminEquipamentoController extends Controller
         $laboratorio->delete();
         return back()->with('success', 'Laboratório excluído com sucesso!');
     }
+    
+    public function indexEquipamentos()
+    {
+        $equipamentos = Equipamento::with(['laboratorio.centro', 'criador'])
+            ->latest()
+            ->get();
+
+        return view('equipamentos.admin.equipamentos', compact('equipamentos'));
+    }
+    
+    public function toggleAtivo(Equipamento $equipamento)
+    {
+        $equipamento->update([
+            'ativo' => !$equipamento->ativo
+        ]);
+
+        return back()->with('success', 'Status alterado com sucesso!');
+    }
+
 }

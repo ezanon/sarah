@@ -11,20 +11,20 @@ use Uspdev\Replicado\Bempatrimoniado;
 
 class EquipamentoController extends Controller
 {
+    
     public function index()
     {
         $user = auth()->user();
 
-        // Busca apenas os equipamentos onde o usuário é o criador OU é um dos responsáveis
-        $equipamentos = Equipamento::with(['laboratorio.centro', 'criador', 'responsaveis'])
-            ->where(function($query) use ($user) {
-                $query->where('user_id', $user->id)
-                      ->orWhereHas('responsaveis', function($q) use ($user) {
-                          $q->where('user_id', $user->id);
-                      });
-            })
-            ->latest()
-            ->get();
+        $query = Equipamento::with(['laboratorio.centro', 'criador', 'responsaveis'])
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhereHas('responsaveis', function($r) use ($user) {
+                      $r->where('user_id', $user->id);
+                  });
+            });
+
+        $equipamentos = $query->latest()->get();
 
         return view('equipamentos.index', compact('equipamentos'));
     }
@@ -48,6 +48,8 @@ class EquipamentoController extends Controller
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('fotosEquipamentos', 'public');
         }
+        
+        $data['ativo'] = $request->has('ativo');
 
         $equipamento = Equipamento::create($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -57,6 +59,7 @@ class EquipamentoController extends Controller
 
     public function show(Equipamento $equipamento)
     {
+
         $equipamento->load(['laboratorio.centro', 'criador', 'responsaveis']);
         return view('equipamentos.show', compact('equipamento'));
     }
@@ -97,6 +100,8 @@ class EquipamentoController extends Controller
             }
             $data['foto'] = null;
         }
+        
+        $data['ativo'] = $request->has('ativo');
 
         $equipamento->update($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -179,6 +184,7 @@ public function buscarPatrimonio(Request $request)
             'valor' => 'nullable|numeric|min:0',
             'cod_processo_incorporacao' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
+            'ativo' => 'nullable|boolean',
         ];
 
         return $request->validate($rules);
