@@ -108,6 +108,8 @@ Route::middleware('auth')->group(function () {
         // Admin de Centros e Laboratórios
         Route::prefix('/admin')->name('admin.')->group(function () {
             Route::get('/', [AdminEquipamentoController::class, 'index'])->name('index');
+            Route::get('/equipamentos', [AdminEquipamentoController::class, 'indexEquipamentos'])->name('equipamentos');
+            Route::patch('/equipamentos/{equipamento}/toggle-ativo', [AdminEquipamentoController::class, 'toggleAtivo'])->name('equipamentos.toggle-ativo');
             Route::post('/centros', [AdminEquipamentoController::class, 'storeCentro'])->name('store.centro');
             Route::post('/laboratorios', [AdminEquipamentoController::class, 'storeLaboratorio'])->name('store.laboratorio');
             Route::delete('/centros/{centro}', [AdminEquipamentoController::class, 'destroyCentro'])->name('destroy.centro');

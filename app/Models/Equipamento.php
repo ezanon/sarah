@@ -20,6 +20,7 @@ class Equipamento extends Model
         'valor',
         'cod_processo_incorporacao',
         'foto',
+        'ativo'
     ];
 
     protected $casts = [

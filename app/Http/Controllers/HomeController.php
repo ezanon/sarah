@@ -6,6 +6,7 @@ use App\Models\Sala;
 use App\Models\Veiculo;
 use App\Models\LinkAcademico; 
 use App\Models\OdsUsuario;
+use App\Http\Controllers\OdsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Uspdev\Replicado\Replicado;
@@ -17,55 +18,71 @@ class HomeController extends Controller
     {
         $user = auth()->user();
 
-        // Valores padrão para visitantes não autenticados
-        $minhaSala = null;
-        $veiculos = collect();
-        $links = collect();
-        $minhasOds = [];
-        $nivelCnpq = null;
+        // Se não estiver logado, retorna apenas a view de login
+        if (!$user) {
+            return view('home', [
+                'veiculos' => collect(),
+                'fotoCustomUrl' => null,
+                'minhaSala' => null,
+                'links' => collect(),
+                'nivelCnpq' => null,
+                'minhasOds' => [],
+                'odsList' => OdsController::ODS_LIST,
+                'equipamentos' => collect(),
+            ]);
+        }
+
+        $codpes = $user->codpes ?? null;
+
+        // Veículos
+        $veiculos = \App\Models\Veiculo::where('user_id', $user->id)->latest()->get();
+
+        // Foto customizada (com cache busting)
         $fotoCustomUrl = null;
-        $codpes = null;
-
-        // Lista de ODS é estática, pode carregar sempre
-        $odsList = \App\Http\Controllers\OdsController::ODS_LIST;
-
-        // Se houver usuário logado, busca os dados dele
-        if ($user) {
-            $codpes = $user->codpes ?? null;
-
-            $minhaSala = \App\Models\Sala::with(['tipo', 'bloco', 'andar'])
-                ->where('user_id', $user->id)->first();
-
-            $veiculos = \App\Models\Veiculo::where('user_id', $user->id)->latest()->get();
-            $links = \App\Models\LinkAcademico::where('user_id', $user->id)->get();
-            $minhasOds = \App\Models\OdsUsuario::where('user_id', $user->id)->pluck('ods_id')->toArray();
-            $nivelCnpq = $user->nivel_cnpq ?? null;
-
-            // Foto customizada (com cache busting)
-            if ($codpes) {
-                $fotoPath = "fotos/{$codpes}.jpg";
-                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($fotoPath)) {
-                    $timestamp = \Illuminate\Support\Facades\Storage::disk('public')->lastModified($fotoPath);
-                    $fotoCustomUrl = asset("storage/{$fotoPath}?v={$timestamp}");
-                }
+        if ($codpes) {
+            $fotoPath = "fotos/{$codpes}.jpg";
+            if (Storage::disk('public')->exists($fotoPath)) {
+                $timestamp = Storage::disk('public')->lastModified($fotoPath);
+                $fotoCustomUrl = asset("storage/{$fotoPath}?v={$timestamp}");
             }
         }
-        
-            // Busca os equipamentos do usuário (criador ou responsável)
-            $equipamentos = \App\Models\Equipamento::with(['laboratorio.centro'])
-                ->where(function($query) use ($user) {
-                    $query->where('user_id', $user->id)
-                          ->orWhereHas('responsaveis', function($q) use ($user) {
-                              $q->where('user_id', $user->id);
-                          });
-                })
-                ->latest()
-                ->take(5) // Limita a 5 equipamentos mais recentes
-                ->get();
+
+        // Minha Sala
+        $minhaSala = Sala::with(['tipo', 'bloco', 'andar'])
+            ->where('user_id', $user->id)->first();
+
+        // Links Acadêmicos
+        $links = \App\Models\LinkAcademico::where('user_id', $user->id)->get();
+
+        // Nível CNPq
+        $nivelCnpq = $user->nivel_cnpq ?? null;
+
+        // ODS
+        $minhasOds = \App\Models\OdsUsuario::where('user_id', $user->id)->pluck('ods_id')->toArray();
+        $odsList = OdsController::ODS_LIST;
+
+        // Equipamentos
+        $equipamentos = \App\Models\Equipamento::with(['laboratorio.centro'])
+            ->where(function($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhereHas('responsaveis', function($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
+            })
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('home', compact(
-            'minhaSala', 'veiculos', 'links', 'minhasOds', 'odsList', 
-            'nivelCnpq', 'fotoCustomUrl', 'equipamentos'
+            'user',
+            'veiculos',
+            'fotoCustomUrl',
+            'minhaSala',
+            'links',
+            'nivelCnpq',
+            'minhasOds',
+            'odsList',
+            'equipamentos'
         ));
     }
     

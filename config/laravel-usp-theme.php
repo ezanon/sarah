@@ -12,6 +12,11 @@ $admin = [
         'icon' => 'bi-hdd-network',
     ],
     [
+        'text' => 'Equipamentos',
+        'url'  => '/equipamentos/admin/equipamentos', 
+        'icon' => 'bi-hdd-network',
+    ],
+    [
         'type' => 'divider',
     ],
     [
