@@ -3,9 +3,33 @@
 @section('content')
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3> Gerenciar Todos os Equipamentos</h3>
-        <a href="{{ route('equipamentos.admin.index') }}" class="btn btn-outline-secondary">← Voltar</a>
+        <h3>🔧 Gerenciar Todos os Equipamentos</h3>
+        <div class="d-flex gap-2">
+            <form action="{{ route('equipamentos.admin.equipamentos.gerar-relatorio') }}" method="POST" class="d-inline" 
+                  onsubmit="return confirm('Deseja gerar o relatório agora?');">
+                @csrf
+                <button type="submit" class="btn btn-success mr-1">
+                    📄 Gerar Relatório
+                </button>
+            </form>
+            <a href="{{ route('equipamentos.admin.index') }}" class="btn btn-outline-secondary">← Voltar</a>
+        </div>
     </div>
+
+    {{-- Mensagens de feedback --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
     <div class="card shadow-sm">
         <div class="card-body">
