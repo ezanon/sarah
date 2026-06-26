@@ -43,13 +43,14 @@ class EquipamentoController extends Controller
     {
         $data = $this->validateEquipamento($request);
         $data['user_id'] = auth()->id();
+        $data['ativo'] = true; // ✅ Mantém apenas esta linha
 
         // Upload da foto
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('fotosEquipamentos', 'public');
         }
-        
-        $data['ativo'] = $request->has('ativo');
+
+        // ❌ REMOVA: $data['ativo'] = $request->has('ativo');
 
         $equipamento = Equipamento::create($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -101,7 +102,7 @@ class EquipamentoController extends Controller
             $data['foto'] = null;
         }
         
-        $data['ativo'] = $request->has('ativo');
+        //$data['ativo'] = $request->has('ativo');
 
         $equipamento->update($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -184,7 +185,7 @@ public function buscarPatrimonio(Request $request)
             'valor' => 'nullable|numeric|min:0',
             'cod_processo_incorporacao' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-            'ativo' => 'nullable|boolean',
+            //'ativo' => 'nullable|boolean',
         ];
 
         return $request->validate($rules);

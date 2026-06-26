@@ -3,7 +3,7 @@
 @section('content')
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3> Equipamentos de Grande Porte</h3>
+        <h3>🔬 Equipamentos de Grande Porte</h3>
         <div>
             <a href="{{ route('equipamentos.create') }}" class="btn btn-primary">+ Novo Equipamento</a>
         </div>
@@ -20,8 +20,12 @@
                     @if($eq->foto_url)
                         <img src="{{ $eq->foto_url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $eq->nome }}">
                     @else
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <span class="text-muted fs-1"></span>
+                        <div class="card-img-top d-flex align-items-center justify-content-center" 
+                             style="height: 200px; background: #e9ecef; border: 1px dashed #bbb;">
+                            <div class="text-center text-muted">
+                                <div style="font-size: 2.5rem; margin-bottom: 5px;">📷</div>
+                                <small>Sem imagem disponível</small>
+                            </div>
                         </div>
                     @endif
                     <div class="card-body">

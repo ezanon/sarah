@@ -73,5 +73,15 @@ class AdminEquipamentoController extends Controller
 
         return back()->with('success', 'Status alterado com sucesso!');
     }
+    
+    public function gerarRelatorio()
+    {
+        try {
+            \Artisan::call('relatorio:equipamentos');
+            return back()->with('success', '✅ Relatório gerado com sucesso! Disponível no website!');
+        } catch (\Exception $e) {
+            return back()->with('error', '❌ Erro ao gerar relatório: ' . $e->getMessage());
+        }
+    }
 
 }
