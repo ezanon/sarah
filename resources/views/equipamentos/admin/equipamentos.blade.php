@@ -55,7 +55,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td><strong>{{ $eq->nome }}</strong></td>
+                                    <td><em>{{ $eq->nome }}</em></td>
                                     <td>{{ $eq->ano_aquisicao ?? '-' }}</td>
                                     <td>{{ $eq->criador->name ?? '-' }}</td>
                                     <td>
