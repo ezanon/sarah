@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Equipamentos de Grande Porte - IGC USP</title>
     <style>
-        body {
+        /* Reset básico para isolar o relatório */
+        .relatorio-equipamentos {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #333;
             max-width: 1100px;
@@ -12,13 +13,15 @@
             padding: 20px;
             line-height: 1.5;
         }
-        h1 {
+
+        .relatorio-equipamentos h1 {
             color: #1a5490;
             border-bottom: 3px solid #1a5490;
             padding-bottom: 10px;
             margin-bottom: 30px;
         }
-        h2 {
+
+        .relatorio-equipamentos h2 {
             color: #1a5490;
             margin-top: 40px;
             margin-bottom: 10px;
@@ -27,21 +30,23 @@
             align-items: center;
             gap: 12px;
         }
-        h2 .centro-sigla {
+
+        .relatorio-equipamentos h2 .centro-sigla {
             background: #1a5490;
-            color: white;
+            color: white !important;
             padding: 4px 12px;
             border-radius: 4px;
             font-size: 1rem;
             font-weight: bold;
         }
-        h2 .centro-nome {
+
+        .relatorio-equipamentos h2 .centro-nome {
             font-weight: 600;
             font-size: 1.5rem;
             color: #1a5490;
         }
 
-        h3 {
+        .relatorio-equipamentos h3 {
             color: #2d6da3;
             margin-top: 25px;
             margin-bottom: 15px;
@@ -52,20 +57,23 @@
             align-items: center;
             gap: 10px;
         }
-        h3 .lab-sigla {
+
+        .relatorio-equipamentos h3 .lab-sigla {
             background: #2d6da3;
-            color: white;
+            color: white !important;
             padding: 3px 10px;
             border-radius: 4px;
             font-size: 0.9rem;
             font-weight: bold;
         }
-        h3 .lab-nome {
+
+        .relatorio-equipamentos h3 .lab-nome {
             font-weight: 600;
             font-size: 1.2rem;
             color: #2d6da3;
         }
-        .equipamento {
+
+        .relatorio-equipamentos .equipamento {
             display: flex;
             gap: 20px;
             padding: 15px;
@@ -74,16 +82,16 @@
             border-left: 4px solid #1a5490;
             border-radius: 4px;
             align-items: flex-start;
-            overflow: hidden; /* ✅ Evita vazamento */
+            overflow: hidden;
         }
 
-        .equipamento-foto {
+        .relatorio-equipamentos .equipamento-foto {
             flex-shrink: 0;
             width: 220px;
             text-align: center;
         }
 
-        .equipamento-foto img {
+        .relatorio-equipamentos .equipamento-foto img {
             max-width: 100%;
             max-height: 170px;
             border-radius: 4px;
@@ -92,11 +100,11 @@
             transition: transform 0.2s;
         }
 
-        .equipamento-foto img:hover {
+        .relatorio-equipamentos .equipamento-foto img:hover {
             transform: scale(1.03);
         }
 
-        .sem-foto {
+        .relatorio-equipamentos .sem-foto {
             width: 220px;
             height: 170px;
             background: #e9ecef;
@@ -109,17 +117,17 @@
             text-align: center;
             padding: 10px;
             border: 1px dashed #bbb;
-            box-sizing: border-box; /* ✅ Garante que padding não aumente a largura */
+            box-sizing: border-box;
         }
 
-        .equipamento-dados {
+        .relatorio-equipamentos .equipamento-dados {
             flex: 1;
-            min-width: 0; /* ✅ Permite que o texto quebre linha */
-            overflow-wrap: break-word; /* ✅ Quebra palavras longas */
+            min-width: 0;
+            overflow-wrap: break-word;
             word-wrap: break-word;
         }
 
-        .equipamento-nome {
+        .relatorio-equipamentos .equipamento-nome {
             font-size: 1.15rem;
             font-weight: bold;
             color: #1a5490;
@@ -127,21 +135,21 @@
             word-break: break-word;
         }
 
-        .equipamento-info {
+        .relatorio-equipamentos .equipamento-info {
             margin: 4px 0;
             font-size: 0.95rem;
             display: flex;
-            flex-wrap: wrap; /* ✅ Permite quebra de linha nos campos */
+            flex-wrap: wrap;
             gap: 4px;
         }
 
-        .equipamento-info strong {
+        .relatorio-equipamentos .equipamento-info strong {
             color: #555;
             min-width: 160px;
             flex-shrink: 0;
         }
 
-        .patrimonio {
+        .relatorio-equipamentos .patrimonio {
             font-family: monospace;
             background: #fff;
             padding: 2px 8px;
@@ -149,7 +157,8 @@
             border: 1px solid #ddd;
             font-size: 0.9rem;
         }
-        .footer {
+
+        .relatorio-equipamentos .footer {
             margin-top: 50px;
             padding-top: 20px;
             border-top: 1px solid #ddd;
@@ -158,8 +167,8 @@
             text-align: center;
         }
 
-        /* 🖼️ Estilos do Lightbox (Zoom) */
-        .lightbox-overlay {
+        /* 🖼️ Lightbox */
+        .relatorio-equipamentos .lightbox-overlay {
             display: none;
             position: fixed;
             z-index: 9999;
@@ -170,39 +179,44 @@
             align-items: center;
             cursor: zoom-out;
         }
-        .lightbox-content {
+
+        .relatorio-equipamentos .lightbox-content {
             max-width: 90%;
             max-height: 90%;
             border-radius: 4px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .lightbox-close {
+
+        .relatorio-equipamentos .lightbox-close {
             position: absolute;
             top: 20px; right: 30px;
-            color: white;
+            color: white !important;
             font-size: 40px;
             font-weight: bold;
             cursor: pointer;
             user-select: none;
         }
-        .lightbox-close:hover {
-            color: #ccc;
+
+        .relatorio-equipamentos .lightbox-close:hover {
+            color: #ccc !important;
         }
 
         @media (max-width: 600px) {
-            .equipamento {
+            .relatorio-equipamentos .equipamento {
                 flex-direction: column;
             }
-            .equipamento-foto, .sem-foto {
+            .relatorio-equipamentos .equipamento-foto, 
+            .relatorio-equipamentos .sem-foto {
                 width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <h1>🔬 Equipamentos de Grande Porte - IGC USP</h1>
+    <div class="relatorio-equipamentos">
+        <h1>🔬 Equipamentos de Grande Porte - IGC USP</h1>
 
-                            <h2>
+                                <h2>
                 <span class="centro-sigla">CEPAS</span>
                 <span class="centro-nome">Centro de Pesquisas de Águas Subterrâneas</span>
             </h2>
@@ -212,109 +226,109 @@
                     <span class="lab-nome">Laboratório de Isótopos Ambientais</span>
                 </h3>
 
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <div class="sem-foto">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
-                                    <span>Sem imagem<br>disponível</span>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <div class="sem-foto">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+                                        <span>Sem imagem<br>disponível</span>
+                                    </div>
                                 </div>
-                            </div>
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Microscopio otico objetivas 20X 40X 63X 100 x (imersao) acoplado computador sistema captura de imagens</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">200.138008</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                CARL ZEISS AXIO LAB A.1
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2018
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Valor:</strong> R$ 59.065,34
-                            </div>
-                                                                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 202510228682
-                            </div>
-                                            </div>
-                </div>
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <div class="sem-foto">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
-                                    <span>Sem imagem<br>disponível</span>
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Microscopio otico objetivas 20X 40X 63X 100 x (imersao) acoplado computador sistema captura de imagens</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">200.138008</span>
                                 </div>
-                            </div>
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Espectrometro de absorção a laser</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">044.012382</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                PICARRO I-H20
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2013
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Valor:</strong> R$ 185.641,54
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> Processo FAPESP nº 11/50553-0 - Termo de Doação nº 01517/2013 de
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 201310653710
-                            </div>
-                                            </div>
-                </div>
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <div class="sem-foto">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
-                                    <span>Sem imagem<br>disponível</span>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    CARL ZEISS AXIO LAB A.1
                                 </div>
-                            </div>
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Capela de exaustão</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">044.012193</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                BRASILAB LCS 150
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2012
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Valor:</strong> R$ 13.500,00
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> Processo FAPESP nº 10/20876-0 - Termo de Doação nº 02654/2012 de 23/10/2012.
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 201310169126
-                            </div>
-                                            </div>
-                </div>
-                                                <h2>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2018
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Valor:</strong> R$ 59.065,34
+                                </div>
+                                                                                                                                                <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 202510228682
+                                </div>
+                                                    </div>
+                    </div>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <div class="sem-foto">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+                                        <span>Sem imagem<br>disponível</span>
+                                    </div>
+                                </div>
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Espectrometro de absorção a laser</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">044.012382</span>
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    PICARRO I-H20
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2013
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Valor:</strong> R$ 185.641,54
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Financiamento:</strong> FAPESP
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Convênio:</strong> Processo FAPESP nº 11/50553-0 - Termo de Doação nº 01517/2013 de
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 201310653710
+                                </div>
+                                                    </div>
+                    </div>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <div class="sem-foto">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+                                        <span>Sem imagem<br>disponível</span>
+                                    </div>
+                                </div>
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Capela de exaustão</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">044.012193</span>
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    BRASILAB LCS 150
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2012
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Valor:</strong> R$ 13.500,00
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Financiamento:</strong> FAPESP
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Convênio:</strong> Processo FAPESP nº 10/20876-0 - Termo de Doação nº 02654/2012 de 23/10/2012.
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 201310169126
+                                </div>
+                                                    </div>
+                    </div>
+                                                            <h2>
                 <span class="centro-sigla">CPGeo</span>
                 <span class="centro-nome">Centro de Pesquisas em Geocronologia e Geoquímica Isotópica</span>
             </h2>
@@ -324,75 +338,75 @@
                     <span class="lab-nome">Laboratório de Microssonda Iônica</span>
                 </h3>
 
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <img src="https://sarah.igc.usp.br/storage/fotosEquipamentos/s2Yzgg8gk6343aK5spLSOrTJuCoDNtQqNXT3fckX.jpg"
-                                 alt="Sensitive High Resolution Ion MIcroProbe"
-                                 onclick="openLightbox(this.src)">
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Sensitive High Resolution Ion MIcroProbe</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">044.010641</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                ASIC IÔNICA de Alta Resolução
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2010
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Valor:</strong> R$ 7.193.975,31
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> Processo FAPESP nº 03/09695-0  -  Termo de Doação nº 01655/2010 de 11/08/2010.
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 201110118030
-                            </div>
-                                            </div>
-                </div>
-                                                    <h3>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <img src="https://sarah.igc.usp.br/storage/fotosEquipamentos/s2Yzgg8gk6343aK5spLSOrTJuCoDNtQqNXT3fckX.jpg"
+                                     alt="Sensitive High Resolution Ion MIcroProbe"
+                                     onclick="openLightbox(this.src)">
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Sensitive High Resolution Ion MIcroProbe</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">044.010641</span>
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    ASIC IÔNICA de Alta Resolução
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2010
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Valor:</strong> R$ 7.193.975,31
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Financiamento:</strong> FAPESP
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Convênio:</strong> Processo FAPESP nº 03/09695-0  -  Termo de Doação nº 01655/2010 de 11/08/2010.
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 201110118030
+                                </div>
+                                                    </div>
+                    </div>
+                                                            <h3>
                     <span class="lab-sigla">LQI</span>
                     <span class="lab-nome">Laboratório de Química Isotópica</span>
                 </h3>
 
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <img src="https://sarah.igc.usp.br/storage/fotosEquipamentos/92dhAyAgFG8IcPLuvt1rUZvdZ2dgxj7KjSS2PHj2.jpg"
-                                 alt="Espectrômetro de Massas de Termo-Ionização (TIMS), multicoletor"
-                                 onclick="openLightbox(this.src)">
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Espectrômetro de Massas de Termo-Ionização (TIMS), multicoletor</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">200.014788</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                Thermo Scientific ARGUS VI
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2008
-                            </div>
-                                                                                                    <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> 2005/58688-1
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 202010323279
-                            </div>
-                                            </div>
-                </div>
-                                                <h2>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <img src="https://sarah.igc.usp.br/storage/fotosEquipamentos/92dhAyAgFG8IcPLuvt1rUZvdZ2dgxj7KjSS2PHj2.jpg"
+                                     alt="Espectrômetro de Massas de Termo-Ionização (TIMS), multicoletor"
+                                     onclick="openLightbox(this.src)">
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Espectrômetro de Massas de Termo-Ionização (TIMS), multicoletor</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">200.014788</span>
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    Thermo Scientific ARGUS VI
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2008
+                                </div>
+                                                                                                                    <div class="equipamento-info">
+                                    <strong>Financiamento:</strong> FAPESP
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Convênio:</strong> 2005/58688-1
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 202010323279
+                                </div>
+                                                    </div>
+                    </div>
+                                                            <h2>
                 <span class="centro-sigla">GAA</span>
                 <span class="centro-nome">Departamento de Geologia Ambiental e Aplicada</span>
             </h2>
@@ -402,77 +416,47 @@
                     <span class="lab-nome">Laboratório de Geofísica</span>
                 </h3>
 
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <div class="sem-foto">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
-                                    <span>Sem imagem<br>disponível</span>
+                                    <div class="equipamento">
+                        <div class="equipamento-foto">
+                                                            <div class="sem-foto">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
+                                        <span>Sem imagem<br>disponível</span>
+                                    </div>
                                 </div>
-                            </div>
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Magnetômetro para sistemas Veículos Aéreos Não-Tripulados (VANT)</div>
-                                                    <div class="equipamento-info">
-                                <strong>Patrimônio:</strong>
-                                <span class="patrimonio">200.055694</span>
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                SENSYS GMBH MAGDRONE R3
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2021
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Valor:</strong> R$ 170.430,98
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> 19/22084-8
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Incorporação:</strong> 202210417137
-                            </div>
-                                            </div>
-                </div>
-                                                    <h3>
-                    <span class="lab-sigla">LMS</span>
-                    <span class="lab-nome">Laboratorio de Micropaleontologia Setembrino Petri</span>
-                </h3>
-
-                            <div class="equipamento">
-                    <div class="equipamento-foto">
-                                                    <div class="sem-foto">
-                                <div style="text-align: center;">
-                                    <div style="font-size: 2rem; margin-bottom: 8px;">📷</div>
-                                    <span>Sem imagem<br>disponível</span>
+                                                    </div>
+                        <div class="equipamento-dados">
+                            <div class="equipamento-nome">Magnetômetro para sistemas Veículos Aéreos Não-Tripulados (VANT)</div>
+                                                            <div class="equipamento-info">
+                                    <strong>Patrimônio:</strong>
+                                    <span class="patrimonio">200.055694</span>
                                 </div>
-                            </div>
-                                            </div>
-                    <div class="equipamento-dados">
-                        <div class="equipamento-nome">Microscopio otico objetivas 20X 40X 63X 100 x (imersao) acoplado computador sistema captura de imagens</div>
-                                                                            <div class="equipamento-info">
-                                <strong>Marca/Modelo:</strong>
-                                ZEISS AxioLab 5
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Ano de aquisição:</strong> 2022
-                            </div>
-                                                                                                    <div class="equipamento-info">
-                                <strong>Financiamento:</strong> FAPESP
-                            </div>
-                                                                            <div class="equipamento-info">
-                                <strong>Processo Convênio:</strong> 2019/07794-9
-                            </div>
-                                                                    </div>
-                </div>
-                        
-    <div class="footer">
-        Última atualização: 26/06/2026 às 19:03<br>
-        Gerado automaticamente pelo sistema SARaH - IGC USP
+                                                                                        <div class="equipamento-info">
+                                    <strong>Marca/Modelo:</strong>
+                                    SENSYS GMBH MAGDRONE R3
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Ano de aquisição:</strong> 2021
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Valor:</strong> R$ 170.430,98
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Financiamento:</strong> FAPESP
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Convênio:</strong> 19/22084-8
+                                </div>
+                                                                                        <div class="equipamento-info">
+                                    <strong>Processo Incorporação:</strong> 202210417137
+                                </div>
+                                                    </div>
+                    </div>
+                                    
+        <div class="footer">
+            Última atualização: 30/06/2026 às 13:57<br>
+            Gerado automaticamente pelo sistema SARaH - IGC USP
+        </div>
     </div>
 
     <!-- 🖼️ Estrutura do Lightbox -->
