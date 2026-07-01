@@ -59,23 +59,83 @@
         {{-- Box: Minha Foto --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-secondary">📷 Minha Foto Alternativa</h5>
+                <h5 class="mb-0 text-secondary">📷 Minha Foto</h5>
                 <a href="{{ route('foto.index') }}" class="btn btn-sm btn-outline-primary">
-                    {{ $fotoCustomUrl ? 'Alterar' : 'Enviar' }}
+                    {{ $fotoCustomUrl ? 'Alterar Foto Alternativa' : 'Enviar Foto Alternativa' }}
                 </a>
             </div>
-            <div class="card-body text-center">
-                @if($fotoCustomUrl)
-                    <img src="{{ $fotoCustomUrl }}" alt="Minha Foto" 
-                         class="img-thumbnail shadow-sm border-primary" style="max-height: 200px; width: auto;">
-                    <p class="text-muted small mt-2 mb-0">Foto atualizada no sistema SARaH</p>
+            <div class="card-body">
+
+                {{-- Toggle de autorização --}}
+                <div class="text-center mb-3">
+                    <div class="d-inline-flex align-items-center gap-2 p-3 bg-light rounded">
+                        <form action="{{ route('user.toggle-foto-publica') }}" method="POST" class="d-inline m-0">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" 
+                                    class="btn btn-sm {{ $user->autoriza_foto_publica ? 'bg-success' : 'bg-danger' }} text-white" 
+                                    title="{{ $user->autoriza_foto_publica ? 'Clique para desautorizar' : 'Clique para autorizar' }}"
+                                    style="min-width: 34px; padding: 0.25rem 0.5rem;">
+                                <i class="fa {{ $user->autoriza_foto_publica ? 'fa-check' : 'fa-times' }}"></i>
+                            </button>
+                        </form>
+                        <span class="text-muted mb-0 ml-2">
+                            Autorizo a exibição da minha foto no website do IGC
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Fotos --}}
+                @if($fotoUspUrl || $fotoCustomUrl)
+                    <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+
+                        {{-- Foto USP --}}
+                        <div class="text-center">
+                            @if($fotoUspUrl)
+                                <img src="{{ $fotoUspUrl }}" alt="Foto USP" 
+                                     class="img-thumbnail shadow-sm" 
+                                     style="max-height: 180px; width: auto; border: 3px solid #fd7e14;">
+                                <p class="text-muted small mt-2 mb-0">Foto USP</p>
+                            @else
+                                <div class="border border-secondary rounded p-3" 
+                                     style="width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-person-circle fs-1 text-muted"></i>
+                                </div>
+                                <p class="text-muted small mt-2 mb-0">Foto USP não disponível</p>
+                            @endif
+                        </div>
+
+                        {{-- Seta --}}
+                        @if($fotoUspUrl)
+                            <div class="text-center ml-3 mr-3">
+                                <div style="font-size: 2.5rem;">➡️</div>
+                            </div>
+                        @endif
+
+                        {{-- Foto Alternativa --}}
+                        <div class="text-center">
+                            @if($fotoCustomUrl)
+                                <img src="{{ $fotoCustomUrl }}" alt="Foto Alternativa" 
+                                     class="img-thumbnail shadow-sm" 
+                                     style="max-height: 180px; width: auto; border: 3px solid #28a745;">
+                                <p class="text-muted small mt-2 mb-0">Foto Alternativa</p>
+                            @else
+                                <div class="rounded p-3" 
+                                     style="width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; border: 3px dashed #fd7e14; background: #fff3cd;">
+                                    <i class="bi bi-person-circle fs-1 text-muted"></i>
+                                </div>
+                                <p class="text-muted small mt-2 mb-0">Sem foto alternativa</p>
+                            @endif
+                        </div>
+
+                    </div>
                 @else
-                    <div class="py-4">
+                    <div class="text-center py-4">
                         <i class="bi bi-person-circle fs-1 text-muted mb-2 d-block"></i>
-                        <p class="text-muted mb-2">Nenhuma foto enviada ainda.</p>
-                        <a href="{{ route('foto.index') }}" class="btn btn-outline-primary btn-sm">Enviar minha foto</a>
+                        <p class="text-muted mb-0">Nenhuma foto disponível</p>
                     </div>
                 @endif
+
             </div>
         </div>
 

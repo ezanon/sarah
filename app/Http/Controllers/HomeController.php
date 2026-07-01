@@ -10,6 +10,7 @@ use App\Http\Controllers\OdsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Uspdev\Replicado\Replicado;
+use Uspdev\Wsfoto; // ✅ Adicione este import
 
 class HomeController extends Controller
 {
@@ -23,6 +24,7 @@ class HomeController extends Controller
             return view('home', [
                 'veiculos' => collect(),
                 'fotoCustomUrl' => null,
+                'fotoUspUrl' => null, // ✅ Adicione
                 'minhaSala' => null,
                 'links' => collect(),
                 'nivelCnpq' => null,
@@ -36,6 +38,20 @@ class HomeController extends Controller
 
         // Veículos
         $veiculos = \App\Models\Veiculo::where('user_id', $user->id)->latest()->get();
+
+        // Foto USP (oficial)
+        $fotoUspUrl = null;
+        if ($codpes) {
+            try {
+                $fotoBase64 = Wsfoto::obter($codpes);
+                if ($fotoBase64) {
+                    $fotoUspUrl = 'data:image/png;base64,' . $fotoBase64;
+                }
+            } catch (\Exception $e) {
+                // Se falhar, deixa null
+                $fotoUspUrl = null;
+            }
+        }
 
         // Foto customizada (com cache busting)
         $fotoCustomUrl = null;
@@ -77,6 +93,7 @@ class HomeController extends Controller
             'user',
             'veiculos',
             'fotoCustomUrl',
+            'fotoUspUrl', // ✅ Adicione
             'minhaSala',
             'links',
             'nivelCnpq',
