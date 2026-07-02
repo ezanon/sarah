@@ -21,3 +21,5 @@ Artisan::command('inspire', function () {
 
 Schedule::command('relatorio:equipamentos')->dailyAt('6:00');
 
+Schedule::command('relatorio:docentes')->dailyAt('6:01');
+
