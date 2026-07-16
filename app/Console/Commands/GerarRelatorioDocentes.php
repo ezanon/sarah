@@ -92,7 +92,27 @@ class GerarRelatorioDocentes extends Command
             ->with(['linksAcademicos'])
             ->first();
         
-        $dadosLocais = $user ? $user->obterDadosPublicos() : [];
+        $fotoUrl = null;
+        $links = [];
+        $ods = [];
+
+        if ($user) {
+            // Se existe no banco, respeita a autorização de foto e pega links/ods
+            $dadosLocais = $user->obterDadosPublicos();
+            $fotoUrl = $dadosLocais['foto_url'];
+            $links = $dadosLocais['links'];
+            $ods = $dadosLocais['ods'];
+        } else {
+            // Se NÃO existe no banco, tentamos buscar a foto direto do Wsfoto para o relatório público
+            try {
+                $fotoBase64 = \Uspdev\Wsfoto::obter($codpes);
+                if ($fotoBase64) {
+                    $fotoUrl = 'data:image/png;base64,' . $fotoBase64;
+                }
+            } catch (\Exception $e) {
+                // Sem foto disponível
+            }
+        }
         
         return [
             'codpes' => $codpes,
@@ -100,9 +120,9 @@ class GerarRelatorioDocentes extends Command
             'email' => $d['codema'] ?? Pessoa::email($codpes),
             'departamento_sigla' => $this->getSiglaDepartamento($codDepto, $departamentos),
             'departamento_nome' => $this->getNomeDepartamento($codDepto, $departamentos),
-            'foto_url' => $dadosLocais['foto_url'] ?? null,
-            'links' => $dadosLocais['links'] ?? [],
-            'ods' => $dadosLocais['ods'] ?? [],
+            'foto_url' => $fotoUrl,
+            'links' => $links,
+            'ods' => $ods,
         ];
     }
 
