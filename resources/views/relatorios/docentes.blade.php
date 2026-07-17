@@ -52,7 +52,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
-            cursor: pointer; /* Card clicável */
+            cursor: pointer;
         }
 
         .docente-card:hover {
@@ -225,11 +225,12 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
+            z-index: 100000;
             justify-content: center;
             align-items: center;
             padding: 20px;
             animation: fadeIn 0.2s ease;
+            overflow-y: auto; /* Permite scroll no overlay se o modal for muito alto */
         }
 
         .modal-overlay.active {
@@ -246,6 +247,7 @@
             position: relative;
             animation: slideUp 0.3s ease;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin: auto; /* Garante centralização correta mesmo com scroll */
         }
 
         .modal-close {
@@ -306,6 +308,10 @@
             font-weight: 700;
             color: #1a5490;
             margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .modal-depto {
@@ -422,6 +428,12 @@
             color: #1a5490;
         }
 
+        .formacao-curso {
+            color: #333;
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
         .formacao-inst {
             color: #555;
             font-size: 0.9rem;
@@ -503,22 +515,33 @@
             margin-top: 8px;
         }
 
+        /* ===== RESPONSIVIDADE (MOBILE) ===== */
         @media (max-width: 768px) {
-            /* Isso mantém o comportamento original dos cards no mobile */
             .docentes-grid {
                 grid-template-columns: 1fr;
             }
 
-            /* A partir daqui, afeta APENAS o modal */
+            /* CORREÇÃO DO CORTE DO TOPO NO MOBILE */
+            .modal-overlay {
+                align-items: flex-start; /* Alinha ao topo em vez de centralizar verticalmente */
+                padding: 10px;
+            }
+
+            .modal-content {
+                max-height: 95vh; /* Aproveita quase toda a altura da tela */
+                margin: 10px auto; /* Margem segura nas laterais e no topo */
+            }
+
             .modal-content .modal-header {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
+                padding: 15px; /* Reduz padding para ganhar espaço vertical */
             }
 
             .modal-content .modal-foto {
-                width: 150px;
-                height: 200px;
+                width: 120px; /* Foto proporcionalmente menor em mobile */
+                height: 160px;
             }
 
             .modal-content .modal-info {
@@ -526,6 +549,12 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                width: 100%;
+            }
+
+            .modal-content .modal-nome {
+                font-size: 1.3rem;
+                justify-content: center;
             }
 
             .modal-content .modal-depto {
@@ -533,6 +562,7 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 8px;
+                margin-bottom: 10px;
             }
 
             .modal-content .modal-meta {
@@ -543,9 +573,23 @@
                 justify-content: center;
             }
 
-            /* Centraliza os links APENAS dentro do modal */
             .modal-content .docente-links-row {
                 justify-content: center;
+            }
+
+            .modal-content .modal-body {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content .modal-foto {
+                width: 100px;
+                height: 135px;
+            }
+
+            .modal-content .modal-nome {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -659,7 +703,7 @@
             document.body.style.overflow = 'hidden';
             
             // Busca dados via API
-            fetch(`/api/docente/${codpes}`)
+            fetch(`{{ config('app.url') }}/api/docente/${codpes}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
