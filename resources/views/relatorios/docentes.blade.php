@@ -52,11 +52,13 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
+            cursor: pointer; /* Card clicável */
         }
 
         .docente-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #1a5490;
         }
 
         .docente-header {
@@ -159,11 +161,11 @@
             margin-bottom: 0;
         }
 
-        /* Links acadêmicos (pílulas com ícone + texto) */
+        /* Links acadêmicos (apenas ícones, sem texto) */
         .docente-link {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
             padding: 6px;
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -214,9 +216,336 @@
             text-align: center;
         }
 
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: #fff;
+            color: #c00;
+        }
+
+        .modal-header {
+            display: flex;
+            gap: 25px;
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+        }
+
+        .modal-foto {
+            flex-shrink: 0;
+            width: 180px;
+            height: 240px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 3px solid #1a5490;
+            background: #f5f5f5;
+        }
+
+        .modal-foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .modal-nome {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a5490;
+            margin: 0 0 10px 0;
+        }
+
+        .modal-depto {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .modal-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .modal-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .modal-meta-item strong {
+            color: #1a5490;
+            min-width: 110px;
+        }
+
+        .modal-meta-item a {
+            color: #1a5490;
+            text-decoration: none;
+        }
+
+        .modal-meta-item a:hover {
+            text-decoration: underline;
+        }
+
+        .nivel-badge {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .duplo-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a5490;
+            margin: 0 0 12px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #1a5490;
+        }
+
+        .modal-section-content {
+            color: #444;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .linhas-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .linhas-list li {
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+
+        .linhas-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #1a5490;
+            font-weight: bold;
+        }
+
+        .formacao-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 3px solid #1a5490;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .formacao-nivel {
+            font-weight: 600;
+            color: #1a5490;
+        }
+
+        .formacao-inst {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .formacao-ano {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .artigo-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #1a5490;
+        }
+
+        .artigo-titulo {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .artigo-autores {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .artigo-autores strong {
+            color: #1a5490;
+            background: #e8f0fe;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .artigo-revista {
+            color: #888;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a5490;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .lattes-update {
+            font-size: 0.85rem;
+            color: #888;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
         @media (max-width: 768px) {
+            /* Isso mantém o comportamento original dos cards no mobile */
             .docentes-grid {
                 grid-template-columns: 1fr;
+            }
+
+            /* A partir daqui, afeta APENAS o modal */
+            .modal-content .modal-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .modal-content .modal-foto {
+                width: 150px;
+                height: 200px;
+            }
+
+            .modal-content .modal-info {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modal-content .modal-depto {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .modal-content .modal-meta {
+                align-items: center;
+            }
+
+            .modal-content .modal-meta-item {
+                justify-content: center;
+            }
+
+            /* Centraliza os links APENAS dentro do modal */
+            .modal-content .docente-links-row {
+                justify-content: center;
             }
         }
     </style>
@@ -227,7 +556,7 @@
 
         <div class="docentes-grid">
             @foreach($docentes as $docente)
-                <div class="docente-card">
+                <div class="docente-card" onclick="abrirModal('{{ $docente['codpes'] }}')">
                     
                     {{-- Cabeçalho: Foto + Depto + Nome + Email --}}
                     <div class="docente-header">
@@ -246,7 +575,7 @@
                             
                             @if($docente['email'])
                                 <div class="docente-email">
-                                    <a href="mailto:{{ $docente['email'] }}">{{ $docente['email'] }}</a>
+                                    <a href="mailto:{{ $docente['email'] }}" onclick="event.stopPropagation()">{{ $docente['email'] }}</a>
                                 </div>
                             @endif
                         </div>
@@ -256,15 +585,14 @@
                     @if(!empty($docente['links']) || !empty($docente['ods']))
                         <div class="docente-links-section">
                             
-                            {{-- Linha 1: Links Acadêmicos --}}
+                            {{-- Linha 1: Links Acadêmicos (apenas ícones) --}}
                             @if(!empty($docente['links']))
                                 <div class="docente-links-row">
                                     @foreach($docente['links'] as $link)
-                                        <a href="{{ $link['url'] }}" target="_blank" class="docente-link" title="{{ $link['nome'] }}">
+                                        <a href="{{ $link['url'] }}" target="_blank" class="docente-link" title="{{ $link['nome'] }}" onclick="event.stopPropagation()">
                                             @if(!empty($link['icone']))
                                                 <img src="{{ $link['icone'] }}" alt="{{ $link['nome'] }}">
                                             @endif
-                                            <!--<span>{{ $link['nome'] }}</span>-->
                                         </a>
                                     @endforeach
                                 </div>
@@ -274,7 +602,7 @@
                             @if(!empty($docente['ods']))
                                 <div class="docente-links-row">
                                     @foreach($docente['ods'] as $ods)
-                                        <a href="{{ $ods['url'] }}" target="_blank" class="docente-link ods-icon" title="{{ $ods['nome'] }}">
+                                        <a href="{{ $ods['url'] }}" target="_blank" class="docente-link ods-icon" title="{{ $ods['nome'] }}" onclick="event.stopPropagation()">
                                             <img src="{{ $ods['img'] }}" alt="ODS {{ $ods['id'] }}">
                                         </a>
                                     @endforeach
@@ -297,5 +625,203 @@
             Gerado automaticamente pelo sistema SARaH
         </div>
     </div>
+
+    <!-- Modal -->
+    <div id="modalDocente" class="modal-overlay" onclick="fecharModalFora(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">×</button>
+            <div id="modalConteudo">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Carregando dados do docente...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let codpesAtual = null;
+
+        function abrirModal(codpes) {
+            codpesAtual = codpes;
+            const modal = document.getElementById('modalDocente');
+            const conteudo = document.getElementById('modalConteudo');
+            
+            // Mostra spinner
+            conteudo.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Carregando dados do docente...</p>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Busca dados via API
+            fetch(`/api/docente/${codpes}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        conteudo.innerHTML = `<div class="modal-body"><p>Erro: ${data.error}</p></div>`;
+                        return;
+                    }
+                    renderizarModal(data);
+                })
+                .catch(err => {
+                    conteudo.innerHTML = `<div class="modal-body"><p>Erro ao carregar dados.</p></div>`;
+                    console.error(err);
+                });
+        }
+
+        function renderizarModal(data) {
+            const conteudo = document.getElementById('modalConteudo');
+            
+            const fotoHtml = data.foto_url 
+                ? `<img src="${data.foto_url}" alt="${data.nome}">`
+                : `<div class="sem-foto">📷</div>`;
+            
+            const nivelHtml = data.nivel_cnpq 
+                ? `<div class="modal-meta-item"><strong>Nível CNPq:</strong> <span class="nivel-badge">${data.nivel_cnpq}</span></div>` 
+                : '';
+            
+            const duploHtml = data.duplo_vinculo 
+                ? `<div class="modal-meta-item"><strong>Duplo vínculo:</strong> <span class="duplo-badge">${data.duplo_vinculo}</span></div>` 
+                : '';
+            
+            const linksHtml = data.links && data.links.length > 0
+                ? data.links.map(l => `
+                    <a href="${l.url}" target="_blank" class="docente-link" title="${l.nome}" style="gap: 6px; padding: 6px 12px;">
+                        ${l.icone ? `<img src="${l.icone}" alt="${l.nome}">` : ''}
+                        <span>${l.nome}</span>
+                    </a>
+                `).join('')
+                : '<em>Nenhum link cadastrado</em>';
+            
+            const odsHtml = data.ods && data.ods.length > 0
+                ? data.ods.map(o => `<a href="${o.url}" target="_blank" class="docente-link ods-icon" title="${o.nome}"><img src="${o.img}"></a>`).join('')
+                : '';
+
+            const lattes = data.lattes || {};
+            const linhasHtml = lattes.linhas_pesquisa && lattes.linhas_pesquisa.length > 0
+                ? `<ul class="linhas-list">${lattes.linhas_pesquisa.map(l => `<li>${l}</li>`).join('')}</ul>`
+                : '<em>Linhas de pesquisa não informadas</em>';
+            
+            const formacaoHtml = lattes.formacao && lattes.formacao.length > 0
+                ? lattes.formacao.slice().reverse().map(f => `
+                    <div class="formacao-item">
+                        <div class="formacao-nivel">${f.nivel}</div>
+                        ${f.curso ? `<div class="formacao-curso"><strong>Curso:</strong> ${f.curso}</div>` : ''}
+                        ${f.instituicao ? `<div class="formacao-inst">${f.instituicao}</div>` : ''}
+                        ${f.ano ? `<div class="formacao-ano">Ano de Conclusão: ${f.ano}</div>` : ''}
+                    </div>
+                `).join('')
+                : '<em>Formação acadêmica não informada</em>';
+            
+            const artigosHtml = lattes.artigos && lattes.artigos.length > 0
+                ? lattes.artigos.map(a => `
+                    <div class="artigo-item">
+                        ${a.titulo ? `<div class="artigo-titulo">${a.titulo}</div>` : ''}
+                        ${a.autores ? `<div class="artigo-autores">${a.autores}</div>` : ''}
+                        <div class="artigo-revista">
+                            ${a.revista ? a.revista : ''}
+                            ${a.volume ? 'v. ' + a.volume : ''}
+                            ${a.pagina_inicial ? 'p. ' + a.pagina_inicial + (a.pagina_final ? '-' + a.pagina_final : '') : ''}
+                            ${a.ano ? '• ' + a.ano : ''}
+                        </div>
+                    </div>
+                `).join('')
+                : '<em>Nenhum artigo encontrado</em>';
+
+            const dataAtualizacao = lattes.data_atualizacao 
+                ? `<div class="lattes-update">📅 Currículo Lattes atualizado em: ${lattes.data_atualizacao}</div>` 
+                : '';
+                
+            const seniorBadge = data.eh_senior 
+                ? `<span style="display: inline-block; background: #9b59b6; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; margin-left: 10px;">Senior</span>` 
+                : '';
+
+            conteudo.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-foto">${fotoHtml}</div>
+                    <div class="modal-info">
+                        <h2 class="modal-nome">${data.nome} ${seniorBadge}</h2>
+                        <div style="margin-bottom: 10px;">
+                            <span class="docente-depto-badge" style="display: inline-block; background: #1a5490; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                ${data.departamento.sigla}
+                            </span>
+                            <span style="color: #555; margin-left: 8px; font-size: 0.95rem;">
+                                ${data.departamento.nome}
+                            </span>
+                        </div>
+                        <div class="modal-meta">
+                            ${data.email ? `<div class="modal-meta-item"><a href="mailto:${data.email}">${data.email}</a></div>` : ''}
+                            ${nivelHtml}
+                            ${duploHtml}
+                        </div>
+                        <div class="docente-links-row" style="margin-top: 10px;">
+                            ${linksHtml}
+                        </div>
+                        ${odsHtml ? `
+                            <div style="margin-top: 10px;">
+                                <strong style="font-size: 0.9rem; color: #1a5490; display: block; margin-bottom: 6px;">ODS - Objetivos de Desenvolvimento Sustentável</strong>
+                                <div class="docente-links-row">
+                                    ${odsHtml}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <!-- 1. Linhas de Pesquisa -->
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">🔬 Linhas de Pesquisa</h3>
+                        <div class="modal-section-content">${linhasHtml}</div>
+                    </div>
+
+                    <!-- 2. Resumo do Currículo Lattes -->
+                    ${lattes.resumo ? `
+                        <div class="modal-section">
+                            <h3 class="modal-section-title">📝 Resumo do Currículo Lattes</h3>
+                            <div class="modal-section-content">${lattes.resumo}</div>
+                            ${lattes.data_atualizacao ? `<div class="lattes-update" style="font-size: 0.85rem; color: #888; font-style: italic; margin-top: 8px;">📅 Última atualização: ${lattes.data_atualizacao}</div>` : ''}
+                        </div>
+                    ` : ''}
+
+                    <!-- 3. Formação Acadêmica -->
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">🎓 Formação Acadêmica</h3>
+                        <div class="modal-section-content">${formacaoHtml}</div>
+                    </div>
+
+                    <!-- 4. Últimos Artigos Publicados -->
+                    <div class="modal-section">
+                        <h3 class="modal-section-title"> Últimos Artigos Publicados</h3>
+                        <div class="modal-section-content">${artigosHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('modalDocente');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            codpesAtual = null;
+        }
+
+        function fecharModalFora(event) {
+            if (event.target === event.currentTarget) {
+                fecharModal();
+            }
+        }
+
+        // Fecha com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && codpesAtual) {
+                fecharModal();
+            }
+        });
+    </script>
 </body>
 </html>
