@@ -23,3 +23,6 @@ Dockerfile.custom
 /public/relatorios/*
 
 /nbproject
+/nbproject/private/
+/nbproject/project.properties
+/nbproject/project.xml
