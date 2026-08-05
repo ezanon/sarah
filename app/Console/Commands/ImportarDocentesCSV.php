@@ -8,7 +8,8 @@ use App\Models\LinkAcademico;
 
 class ImportarDocentesCSV extends Command
 {
-    protected $signature = 'importar:linksdocentes {arquivo}';
+
+    protected $signature = 'importar:docentes {arquivo}';
     protected $description = 'Importa dados de docentes de um arquivo CSV';
 
     private $plataformas = [
