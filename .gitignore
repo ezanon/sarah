@@ -21,3 +21,5 @@ public/vendor
 Dockerfile.custom
 
 /public/relatorios/*
+
+nbproject/
