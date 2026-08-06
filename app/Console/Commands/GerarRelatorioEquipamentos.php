@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Equipamento;
 use Illuminate\Console\Command;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
 
 class GerarRelatorioEquipamentos extends Command
 {
@@ -47,5 +49,13 @@ class GerarRelatorioEquipamentos extends Command
         file_put_contents($path . '/equipamentos.html', $html);
 
         $this->info('✅ Relatório gerado em: public/relatorios/equipamentos.html');
+        
+        // 📄 Gera o PDF (A4 retrato)
+        $pdf = Pdf::loadView('relatorios.equipamentos-pdf', ['agrupados' => $agrupados])
+            ->setPaper('a4', 'portrait');
+
+        File::put(public_path('relatorios/equipamentos.pdf'), $pdf->output());
+
+        $this->info('PDF gerado em public/relatorios/equipamentos.pdf');
     }
 }
