@@ -14,7 +14,7 @@ use Uspdev\Replicado\Posgraduacao;
 
 class ImportarUsuarios extends Command
 {
-    protected $signature = 'sarah:importar-usuarios';
+    protected $signature = 'importar:usuarios';
     protected $description = 'Importa docentes, pós-docs, colaboradores e pós-graduandos via Replicado (USP)';
 
     // Totais consolidados
@@ -36,6 +36,11 @@ class ImportarUsuarios extends Command
                 'nome'    => 'Docentes',
                 'metodo'  => fn() => Pessoa::listarDocentes(null, 'A,P'),
                 'icone'   => '👨‍🏫',
+            ],
+            [
+                'nome'    => 'Servidores técnico-administrativos',
+                'metodo'  => fn() => Pessoa::listarServidores(),
+                'icone'   => '👨‍💼',
             ],
             [
                 'nome'    => 'Pós-doutorandos',

@@ -54,6 +54,17 @@ $schedule->command('sarah:importar-usuarios')->dailyAt('03:00');
 
 ---
 
+## 🚀 Instalação
+
+1. Clone o repositório: `git clone ...`
+2. Instale as dependências: `composer install`
+3. Copie o arquivo de ambiente: `cp .env.example .env`
+4. Gere a chave da aplicação: `php artisan key:generate`
+5. Rode as migrações do banco: `php artisan migrate`
+6. Crie o link de armazenamento (essencial para as fotos): `php artisan storage:link`
+
+---
+
 ## 💡 Contribuições e sugestões
 
 O SARaH é um projeto em constante evolução. Sugestões de novas funcionalidades, ajustes ou melhorias são sempre bem-vindas.

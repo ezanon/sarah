@@ -11,6 +11,7 @@ use App\Http\Controllers\CnpqController;
 use App\Http\Controllers\FotoController;
 use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\AdminEquipamentoController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +100,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/minha-foto', 'index')->name('foto.index');
         Route::post('/minha-foto', 'store')->name('foto.store');
     });
+    Route::patch('/user/toggle-foto-publica', [UserController::class, 'toggleFotoPublica'])->name('user.toggle-foto-publica');
 
     
     // ─────────────────────────────────────────────────────────
