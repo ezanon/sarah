@@ -55,7 +55,8 @@
                 @endif
             </div>
         </div>
-    
+        
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor'])
         {{-- Box: Minha Foto --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -84,7 +85,8 @@
                         </span>
                     </div>
                 </div>
-
+                
+               
                 {{-- Fotos --}}
                 @if($fotoUspUrl || $fotoCustomUrl)
                     <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
@@ -138,7 +140,9 @@
 
             </div>
         </div>
+        @endcanany
 
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
         {{-- Box: Minha Sala --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -181,9 +185,9 @@
                 @endif
             </div>
         </div>
-    
+        @endcanany
 
-    
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor','senhaunica.alunopos','senhaunica.alunopd'])
         {{-- Box: Links Acadêmicos --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -212,7 +216,9 @@
                 @endif
             </div>
         </div>
+        @endcanany
 
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
         {{-- Box: Nível CNPq --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -232,8 +238,9 @@
                 @endif
             </div>
         </div>
+        @endcanany
     
-    
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
         {{-- Box: Minhas ODS --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -260,7 +267,9 @@
                 @endif
             </div>
         </div>
+        @endcanany
 
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor'])
         {{-- EQUIPAMENTOS --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -315,6 +324,7 @@
                 @endif
             </div>
         </div>
+        @endcanany
 
     @else
         {{-- Não autenticado --}}

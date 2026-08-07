@@ -1,69 +1,30 @@
 <?php
 
-$admin = [
+$c_pesquisa = [
     [
-        'text' => 'Salas',
-        'url'  => '/minhasala/admin', 
-        'icon' => 'bi-gear',
-    ],
-    [
-        'text' => 'Centros/Labs',
+        'text' => 'Centros e Labs',
         'url'  => '/equipamentos/admin', 
-        'icon' => 'bi-hdd-network',
     ],
     [
         'text' => 'Equipamentos',
         'url'  => '/equipamentos/admin/equipamentos', 
-        'icon' => 'bi-hdd-network',
     ],
+];
+
+$admin = [
+    [
+        'text' => 'Salas',
+        'url'  => '/minhasala/admin', 
+    ],
+    // CPqI
     [
         'type' => 'divider',
     ],
     [
         'type' => 'header',
-        'text' => 'Cabeçalho',
+        'text' => 'CPqI',
     ],
-    [
-        'text' => 'SubItem 3',
-        'url' => 'subitem3',
-    ],
-];
-
-$submenu2 = [
-    [
-        'text' => 'Sala',
-        'url' => '/minhasala',
-        'icon' => 'bi-door-open',
-    ],
-    [
-        'text' => 'Veículos',
-        'url' => '/meusveiculos',
-        'icon' => 'bi-car-front',
-    ],
-    [
-        'text' => 'Links Acadêmicos',
-        'url' => '/links-academicos',
-        'icon' => 'bi-link-45deg',
-    ],      
-    [
-        'text' => 'Nível CNPq',
-        'url' => '/meu-cnpq',
-        'icon' => 'bi-award',
-    ],
-    [
-        'text' => 'ODS',
-        'url' => '/minhas-ods',
-        'icon' => 'bi-globe-americas',
-    ],
-    [
-        'text' => 'Foto Alternativa',
-        'url' => '/minha-foto',
-        'icon' => 'bi-camera',
-    ],
-    [
-        'text' => 'Equipamentos',
-        'url' => '/equipamentos',
-    ],
+    ...$c_pesquisa,
 ];
 
 $menu = [
@@ -72,19 +33,14 @@ $menu = [
         'key' => 'menu_dinamico',
     ],
     [
-        'text' => 'Meus Dados',
-        'submenu' => $submenu2,
-        'can' => 'user',
-    ],
-    [
-        'text' => 'Menu gerente',
-        'url' => 'gerente',
-        'can' => 'gerente',
-    ],
-    [
         'text' => 'Admin',
         'submenu' => $admin,
         'can' => 'admin',
+    ],
+    [
+        'text' => 'CPqI',
+        'submenu' => $c_pesquisa,
+        'can' => 'c_pesquisa',
     ],
 ];
 
@@ -96,13 +52,13 @@ $right_menu = [
     [
         'key' => 'laravel-tools',
     ],
-    [
+/*    [
         'text' => '<i class="fas fa-cog"></i>',
         'title' => 'Configurações',
         'target' => '_blank',
         'url' => config('app.url') . '/item1',
         'align' => 'right',
-    ],
+    ],*/
 ];
 
 
