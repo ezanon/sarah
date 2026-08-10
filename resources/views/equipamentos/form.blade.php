@@ -54,23 +54,37 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
         <label class="form-label">Ano Aquisição</label>
         <input type="number" name="ano_aquisicao" class="form-control" min="1900" max="2100" value="{{ old('ano_aquisicao', $equipamento->ano_aquisicao ?? '') }}">
     </div>
-    <div class="col-md-4 mb-3">
+    <div class="col-md-6 mb-3">
         <label class="form-label">Ano Incorporação</label>
         <input type="number" name="ano_incorporacao" class="form-control" min="1900" max="2100" value="{{ old('ano_incorporacao', $equipamento->ano_incorporacao ?? '') }}">
-    </div>
-    <div class="col-md-4 mb-3">
-        <label class="form-label">Valor (R$)</label>
-        <input type="number" step="0.01" name="valor" class="form-control" value="{{ old('valor', $equipamento->valor ?? '') }}">
-    </div>
+    </div>    
 </div>
 
-<div class="mb-3">
-    <label class="form-label">Financiamento</label>
-    <input type="text" name="financiamento" class="form-control" value="{{ old('financiamento', $equipamento->financiamento ?? '') }}" placeholder="Ex: FAPESP, CAPES, USP">
+<div class="row">    
+    <div class="col-md-5">
+        <label class="form-label">Financiamento</label>
+        <input type="text" name="financiamento" class="form-control" value="{{ old('financiamento', $equipamento->financiamento ?? '') }}" placeholder="Ex: FAPESP, CAPES, USP">    
+    </div>
+    <div class="col-md-2">
+        <label for="moeda" class="form-label">Moeda</label>
+        <select class="form-select" id="moeda" name="moeda">
+            <option value="BRL" {{ old('moeda', $equipamento->moeda ?? 'BRL') == 'BRL' ? 'selected' : '' }}>R$ (Real)</option>
+            <option value="USD" {{ old('moeda', $equipamento->moeda ?? '') == 'USD' ? 'selected' : '' }}>US$ (Dólar)</option>
+            <option value="EUR" {{ old('moeda', $equipamento->moeda ?? '') == 'EUR' ? 'selected' : '' }}>€ (Euro)</option>
+        </select>
+        @error('moeda') <div class="text-danger small">{{ $message }}</div> @enderror
+    </div>
+    <div class="col-md-5">
+        <label for="valor" class="form-label">Valor</label>
+        <input type="number" step="0.01" min="0" class="form-control" 
+               id="valor" name="valor" 
+               value="{{ old('valor', $equipamento->valor ?? '') }}">
+        @error('valor') <div class="text-danger small">{{ $message }}</div> @enderror
+    </div>
 </div>
 
 <div class="row">

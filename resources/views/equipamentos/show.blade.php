@@ -66,8 +66,7 @@
                         <li class="list-group-item"><strong>Patrimônio:</strong> {{ $equipamento->patrimonio ?? 'Não informado' }}</li>
                         <li class="list-group-item"><strong>Ano Aquisição:</strong> {{ $equipamento->ano_aquisicao ?? '-' }}</li>
                         <li class="list-group-item"><strong>Ano Incorporação:</strong> {{ $equipamento->ano_incorporacao ?? '-' }}</li>
-                        <li class="list-group-item"><strong>Valor:</strong> {{ $equipamento->valor ? 'R$ ' . number_format($equipamento->valor, 2, ',', '.') : '-' }}</li>
-                        <li class="list-group-item"><strong>Financiamento:</strong> {{ $equipamento->financiamento ?? '-' }}</li>
+                        <li class="list-group-item"><strong>Valor:</strong> {{ $equipamento->valor_formatado }}</li>                        <li class="list-group-item"><strong>Financiamento:</strong> {{ $equipamento->financiamento ?? '-' }}</li>
                         <li class="list-group-item"><strong>Proc. Convênio:</strong> {{ $equipamento->cod_processo_convenio ?? '-' }}</li>
                         <li class="list-group-item"><strong>Proc. Incorporação:</strong> {{ $equipamento->cod_processo_incorporacao ?? '-' }}</li>
                         <li class="list-group-item"><strong>Criado por:</strong> {{ $equipamento->criador->name ?? '-' }}</li>

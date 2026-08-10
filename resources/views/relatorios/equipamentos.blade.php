@@ -302,7 +302,7 @@
                     @endif
                     @if($eq->valor)
                     <div class="equipamento-info">
-                        <strong>Valor:</strong> R$ {{ number_format($eq->valor, 2, ',', '.') }}
+                        <strong>Valor:</strong> {{ $eq->valor_formatado }}
                     </div>
                     @endif
                     @if($eq->financiamento)

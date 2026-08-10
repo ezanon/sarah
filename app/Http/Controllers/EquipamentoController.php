@@ -183,6 +183,7 @@ public function buscarPatrimonio(Request $request)
             'cod_processo_convenio' => 'nullable|string|max:255',
             'patrimonio' => 'nullable|string|max:50|unique:equipamentos,patrimonio,' . $ignoreId,
             'valor' => 'nullable|numeric|min:0',
+            'moeda' => 'nullable|in:BRL,USD,EUR',
             'cod_processo_incorporacao' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             //'ativo' => 'nullable|boolean',
