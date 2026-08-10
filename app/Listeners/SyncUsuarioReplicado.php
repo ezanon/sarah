@@ -14,10 +14,10 @@ class SyncUsuarioReplicado
         $user = $event->user;
 
         // 1. Só executa se o usuário tiver codpes e ainda não tiver links cadastrados no SARaH
-        if (!$user->codpes || $user->links()->exists()) {
+        
+        if (!$user->codpes || $user->linksAcademicos()->exists()) {
             return;
         }
-
         try {
             // 2. Busca o ID Lattes diretamente
             $lattesId = Lattes::id($user->codpes);

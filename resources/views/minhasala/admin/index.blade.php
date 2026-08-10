@@ -25,7 +25,7 @@
                         @forelse($tipos as $t)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{ $t->nome }}
-                                <span class="badge bg-secondary">{{ $t->salas->count() }} vinculadas</span>
+                                <span class="badge bg-secondary text-white">{{ $t->salas->count() }} vinculadas</span>
                             </li>
                         @empty
                             <li class="list-group-item text-muted">Nenhum cadastrado</li>
@@ -51,7 +51,7 @@
                         @forelse($blocos as $b)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{ $b->nome }}
-                                <span class="badge bg-secondary">{{ $b->salas->count() }} vinculadas</span>
+                                <span class="badge bg-secondary text-white">{{ $b->salas->count() }} vinculadas</span>
                             </li>
                         @empty
                             <li class="list-group-item text-muted">Nenhum cadastrado</li>
@@ -77,7 +77,7 @@
                         @forelse($andares as $a)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{ $a->numero }}
-                                <span class="badge bg-secondary">{{ $a->salas->count() }} vinculadas</span>
+                                <span class="badge bg-secondary text-white">{{ $a->salas->count() }} vinculadas</span>
                             </li>
                         @empty
                             <li class="list-group-item text-muted">Nenhum cadastrado</li>
