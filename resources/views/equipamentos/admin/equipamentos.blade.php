@@ -12,6 +12,14 @@
                     📄 Gerar Relatório
                 </button>
             </form>
+
+            {{-- Botão para ver o relatório (só aparece se o arquivo existir) --}}
+            @if(file_exists(public_path('relatorios/equipamentos.pdf')))
+                <a href="{{ asset('relatorios/equipamentos.pdf') }}" target="_blank" class="btn btn-outline-success mr-1">
+                    👁️ Ver Relatório
+                </a>
+            @endif
+
             <a href="{{ route('equipamentos.admin.index') }}" class="btn btn-outline-secondary">← Voltar</a>
         </div>
     </div>
@@ -79,7 +87,13 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td><em>{{ $eq->nome }}</em></td>
+                                    <td>
+                                        <em>{{ $eq->nome }}</em>
+                                        @if($eq->marca || $eq->modelo)
+                                            <br>
+                                            <small class="text-muted">{{ trim($eq->marca . ' ' . $eq->modelo) }}</small>
+                                        @endif
+                                    </td>
                                     <td>{{ $eq->ano_aquisicao ?? '-' }}</td>
                                     <td>{{ $eq->criador->name ?? '-' }}</td>
                                     <td>

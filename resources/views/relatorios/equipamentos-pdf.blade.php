@@ -159,7 +159,7 @@
                                 <div class="info"><strong>Ano de aquisição:</strong> {{ $eq->ano_aquisicao }}</div>
                             @endif
                             @if($eq->valor)
-                                <div class="info"><strong>Valor:</strong> R$ {{ number_format($eq->valor, 2, ',', '.') }}</div>
+                                <div class="info"><strong>Valor:</strong> {{ $eq->valor_formatado }}</div>
                             @endif
                             @if($eq->financiamento)
                                 <div class="info"><strong>Financiamento:</strong> {{ $eq->financiamento }}</div>
