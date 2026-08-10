@@ -26,16 +26,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Permission::firstOrCreate(['name' => 'c_grad']);
-        Permission::firstOrCreate(['name' => 'c_posgrad']);
-        Permission::firstOrCreate(['name' => 'c_pesquisa']);
-        Permission::firstOrCreate(['name' => 'c_cultext']);
-        Permission::firstOrCreate(['name' => 'c_inclusao']);
-        Permission::firstOrCreate(['name' => 'c_internacional']);
-        Permission::firstOrCreate(['name' => 'gmg']);
-        Permission::firstOrCreate(['name' => 'gaa']);
-        
-        $role = Role::firstOrCreate(['name' => 'departamentos']);
-        $role->givePermissionTo(['gmg', 'gaa']);
+        $guard = 'web'; // Força o guard correto
+
+        Permission::firstOrCreate(['name' => 'c_grad', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'c_posgrad', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'c_pesquisa', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'c_cultext', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'c_inclusao', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'c_internacional', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'gmg', 'guard_name' => $guard]);
+        Permission::firstOrCreate(['name' => 'gaa', 'guard_name' => $guard]);
+
+        $roleDeptos = Role::firstOrCreate(['name' => 'departamentos', 'guard_name' => $guard]);
+        $roleDeptos->givePermissionTo(['gmg', 'gaa']);
+
+        $roleTotal = Role::firstOrCreate(['name' => 'controle_total', 'guard_name' => $guard]);
+        $roleTotal->syncPermissions(Permission::where('guard_name', $guard)->get());
     }
 }

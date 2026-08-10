@@ -51,7 +51,8 @@ Route::middleware('auth')->group(function () {
     // ─────────────────────────────────────────────────────────
     Route::prefix('/minhasala/admin')
         ->name('minhasala.admin.')
-        ->controller(AdminSalaController::class)
+        ->controller(AdminSalaController::class)    
+        ->middleware('permission:admin')
         ->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/tipos', 'storeTipo')->name('store.tipo');
@@ -108,7 +109,10 @@ Route::middleware('auth')->group(function () {
     // ─────────────────────────────────────────────────────────
     Route::prefix('/equipamentos')->name('equipamentos.')->group(function () {
         // Admin de Centros e Laboratórios
-        Route::prefix('/admin')->name('admin.')->group(function () {
+        Route::prefix('/admin')
+                ->name('admin.')
+                ->middleware('permission:c_pesquisa')
+                ->group(function () {
             Route::get('/', [AdminEquipamentoController::class, 'index'])->name('index');
             Route::get('/equipamentos', [AdminEquipamentoController::class, 'indexEquipamentos'])->name('equipamentos');
             Route::post('/equipamentos/gerar-relatorio', [AdminEquipamentoController::class, 'gerarRelatorio'])->name('equipamentos.gerar-relatorio');

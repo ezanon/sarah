@@ -65,6 +65,13 @@ $schedule->command('sarah:importar-usuarios')->dailyAt('03:00');
 
 ---
 
+## Gerenciamento de Permissões e Roles
+
+Para criar novas permissões ou roles, edite o arquivo:
+`app/Providers/AppServiceProvider.php`
+
+---
+
 ## 💡 Contribuições e sugestões
 
 O SARaH é um projeto em constante evolução. Sugestões de novas funcionalidades, ajustes ou melhorias são sempre bem-vindas.
