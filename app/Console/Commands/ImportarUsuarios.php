@@ -172,7 +172,7 @@ class ImportarUsuarios extends Command
                 }
 
                 // Sincroniza links apenas se for novo ou ainda não tiver
-                if ($user->wasRecentlyCreated || !$user->links()->exists()) {
+                if ($user->wasRecentlyCreated || !$user->linksAcademicos()->exists()) {
                     $this->sincronizarLinks($user, $codpes);
                 }
 
