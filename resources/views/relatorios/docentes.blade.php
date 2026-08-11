@@ -694,7 +694,7 @@
                             @endif
 
                             {{-- Linha 2: ODS (apenas ícones com links) --}}
-                            @if(!empty($docente['ods']))
+<!--                            @if(!empty($docente['ods']))
                                 <div class="docente-links-row">
                                     @foreach($docente['ods'] as $ods)
                                         <a href="{{ $ods['url'] }}" target="_blank" class="docente-link ods-icon" title="{{ $ods['nome'] }}" onclick="event.stopPropagation()">
@@ -702,7 +702,7 @@
                                         </a>
                                     @endforeach
                                 </div>
-                            @endif
+                            @endif-->
 
                         </div>
                     @endif
