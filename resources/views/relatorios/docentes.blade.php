@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Docentes - IGC USP</title>
     <style>
+        
+        body {
+            margin: 0;
+        }
+        
         .relatorio-docentes {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, B linkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #333;
             max-width: 1200px;
             margin: 0 auto;
@@ -17,6 +22,13 @@
 
         .relatorio-docentes *, .relatorio-docentes *::before, .relatorio-docentes *::after {
             box-sizing: inherit;
+        }
+
+        .banner-topo {
+            width: 100%;
+            max-width: 1200px; /* Alinha perfeitamente com o container */
+            display: block;
+            margin: 0 auto;
         }
 
         .relatorio-docentes h1 {
@@ -216,6 +228,36 @@
             text-align: center;
         }
 
+        /* ===== NOVO: Estilos do Rodapé Personalizado ===== */
+        .rodape-custom {
+            background-color: #777;
+            color: #fff;
+            padding: 20px 0;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .rodape-conteudo {
+            max-width: 1200px; /* Alinha com o container principal */
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .rodape-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .rodape-texto {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
         /* ===== MODAL ===== */
         .modal-overlay {
             display: none;
@@ -230,7 +272,7 @@
             align-items: center;
             padding: 20px;
             animation: fadeIn 0.2s ease;
-            overflow-y: auto; /* Permite scroll no overlay se o modal for muito alto */
+            overflow-y: auto;
         }
 
         .modal-overlay.active {
@@ -247,7 +289,7 @@
             position: relative;
             animation: slideUp 0.3s ease;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin: auto; /* Garante centralização correta mesmo com scroll */
+            margin: auto;
         }
 
         .modal-close {
@@ -521,26 +563,25 @@
                 grid-template-columns: 1fr;
             }
 
-            /* CORREÇÃO DO CORTE DO TOPO NO MOBILE */
             .modal-overlay {
-                align-items: flex-start; /* Alinha ao topo em vez de centralizar verticalmente */
+                align-items: flex-start;
                 padding: 10px;
             }
 
             .modal-content {
-                max-height: 95vh; /* Aproveita quase toda a altura da tela */
-                margin: 10px auto; /* Margem segura nas laterais e no topo */
+                max-height: 95vh;
+                margin: 10px auto;
             }
 
             .modal-content .modal-header {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                padding: 15px; /* Reduz padding para ganhar espaço vertical */
+                padding: 15px;
             }
 
             .modal-content .modal-foto {
-                width: 120px; /* Foto proporcionalmente menor em mobile */
+                width: 120px;
                 height: 160px;
             }
 
@@ -580,6 +621,12 @@
             .modal-content .modal-body {
                 padding: 15px;
             }
+
+            /* Ajuste responsivo do rodapé */
+            .rodape-conteudo {
+                flex-direction: column;
+                text-align: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -595,6 +642,10 @@
     </style>
 </head>
 <body>
+    
+    {{-- 🖼️ BANNER NO TOPO (Fora do container, mas com a mesma largura máxima) --}}
+    <img src="{{ asset('images/relatorios/docentes-banner.png') }}" alt="Banner Corpo Docente IGC USP" class="banner-topo">
+
     <div class="relatorio-docentes">
         <!--<h1>👨‍🏫 Corpo Docente - IGC USP</h1>-->
 
@@ -669,6 +720,14 @@
             Gerado automaticamente pelo sistema SARaH
         </div>
     </div>
+
+    {{-- 🦶 RODAPÉ PERSONALIZADO COM FUNDO #777 --}}
+    <footer class="rodape-custom">
+        <div class="rodape-conteudo">
+            <img src="{{ asset('images/relatorios/logo-igc-transparente-pequeno.png') }}" alt="Logotipo IGC USP" class="rodape-logo">
+            <p class="rodape-texto">IGc/USP © 1999-{{ date('Y') }}. Todos os Direitos Reservados.</p>
+        </div>
+    </footer>
 
     <!-- Modal -->
     <div id="modalDocente" class="modal-overlay" onclick="fecharModalFora(event)">
