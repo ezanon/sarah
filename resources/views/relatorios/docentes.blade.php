@@ -8,6 +8,7 @@
         
         body {
             margin: 0;
+            background-color: #eaeaea;
         }
         
         .relatorio-docentes {
@@ -18,6 +19,8 @@
             padding: 20px;
             line-height: 1.5;
             box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: 6px 0 0 rgba(0,0,0,.04),-6px 0 0 rgba(0,0,0,.04);
         }
 
         .relatorio-docentes *, .relatorio-docentes *::before, .relatorio-docentes *::after {
@@ -29,6 +32,7 @@
             max-width: 1200px; /* Alinha perfeitamente com o container */
             display: block;
             margin: 0 auto;
+            box-shadow: 6px 0 0 rgba(0,0,0,.04),-6px 0 0 rgba(0,0,0,.04);
         }
 
         .relatorio-docentes h1 {
@@ -230,7 +234,7 @@
 
         /* ===== NOVO: Estilos do Rodapé Personalizado ===== */
         .rodape-custom {
-            background-color: #777;
+            background-color: #33363b;
             color: #fff;
             padding: 20px 0;
             margin-top: 40px;
