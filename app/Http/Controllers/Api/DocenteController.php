@@ -302,4 +302,23 @@ class DocenteController extends Controller
         $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
         return trim($texto);
     }
+    
+    /**
+    * Busca docente pelo username (parte antes do @ do e-mail)
+    * e reutiliza a lógica do método show()
+    */
+    public function showByUsername(string $username)
+    {
+        // Busca o primeiro usuário cujo e-mail começa com o username informado
+        $user = User::where('email', 'LIKE', $username . '@%')->first();
+
+        if (!$user) {
+            abort(404, 'Docente não encontrado');
+        }
+
+        // Chama o método show original passando o codpes encontrado
+        // Isso garante que o cache e toda a formatação sejam reaproveitados
+        return $this->show($user->codpes);
+    }
+
 }
