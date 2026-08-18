@@ -687,6 +687,17 @@
                             {{-- Linha 1: Links Acadêmicos (apenas ícones) --}}
                             @if(!empty($docente['links']))
                                 <div class="docente-links-row">
+                                    
+                                    {{-- 🌐 Ícone globo: link para o perfil público do docente --}}
+                                    @if(!empty($docente['email']))
+                                        @php
+                                            $username = explode('@', $docente['email'])[0];
+                                        @endphp
+                                        <a href="/docente/{{ $username }}" class="docente-link" title="Perfil público" onclick="event.stopPropagation()">
+                                            <img src="{{ asset('images/iconesacademicos/globo.png') }}" alt="Perfil público">
+                                        </a>
+                                    @endif
+                                    
                                     @foreach($docente['links'] as $link)
                                         <a href="{{ $link['url'] }}" target="_blank" class="docente-link" title="{{ $link['nome'] }}" onclick="event.stopPropagation()">
                                             @if(!empty($link['icone']))
