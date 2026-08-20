@@ -77,13 +77,10 @@ class HomeController extends Controller
         $minhasOds = \App\Models\OdsUsuario::where('user_id', $user->id)->pluck('ods_id')->toArray();
         $odsList = OdsController::ODS_LIST;
 
-        // Equipamentos
+        // Equipamentos (apenas os que o usuário é responsável)
         $equipamentos = \App\Models\Equipamento::with(['laboratorio.centro'])
-            ->where(function($query) use ($user) {
-                $query->where('user_id', $user->id)
-                    ->orWhereHas('responsaveis', function($q) use ($user) {
-                        $q->where('user_id', $user->id);
-                    });
+            ->whereHas('responsaveis', function($q) use ($user) {
+                $q->where('user_id', $user->id);
             })
             ->latest()
             ->take(5)
