@@ -2,9 +2,12 @@
 
 @section('content')
 <div class="container py-4">
-    <h3 class="mb-2">📷 Minha Foto Alternativa</h3>
-    <p class="text-muted mb-4">
+    <h3 class="mb-2">📷 Foto Alternativa</h3>
+    <p class="text-muted mb-2">
         Envie uma foto recente. O sistema ajustará automaticamente para o formato <strong>3x4</strong> (padrão institucional).
+    </p>
+    <p class="text-muted mb-4">
+        Esta foto poderá ser utilizada no website ou em relatórios, caso a permissão esteja ativa.
     </p>
 
     @if(session('success'))

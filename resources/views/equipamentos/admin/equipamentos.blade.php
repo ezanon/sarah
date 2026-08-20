@@ -5,13 +5,13 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>🔧 Gerenciar Todos os Equipamentos</h3>
         <div class="d-flex gap-2">
-            <form action="{{ route('equipamentos.admin.equipamentos.gerar-relatorio') }}" method="POST" class="d-inline" 
+<!--            <form action="{{ route('equipamentos.admin.equipamentos.gerar-relatorio') }}" method="POST" class="d-inline" 
                   onsubmit="return confirm('Deseja gerar o relatório agora?');">
                 @csrf
                 <button type="submit" class="btn btn-success mr-1">
                     📄 Gerar Relatório
                 </button>
-            </form>
+            </form>-->
 
             {{-- Botão para ver o relatório (só aparece se o arquivo existir) --}}
             @if(file_exists(public_path('relatorios/equipamentos.pdf')))
@@ -51,7 +51,7 @@
                                 <th>Local</th>
                                 <th>Equipamento</th>
                                 <th>Ano</th>
-                                <th>Criado por</th>
+                                <th>Responsáveis</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -78,9 +78,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex flex-column align-items-start">
                                             @if($eq->laboratorio->centro->sigla)
-                                                <span class="badge bg-primary text-white">{{ $eq->laboratorio->centro->sigla }}</span>
+                                                <span class="badge bg-primary text-white mb-1">{{ $eq->laboratorio->centro->sigla }}</span>
                                             @endif
                                             @if($eq->laboratorio->sigla)
                                                 <span class="badge bg-success text-white" style="margin-left: 1px;">{{ $eq->laboratorio->sigla }}</span>
@@ -95,7 +95,19 @@
                                         @endif
                                     </td>
                                     <td>{{ $eq->ano_aquisicao ?? '-' }}</td>
-                                    <td>{{ $eq->criador->name ?? '-' }}</td>
+                                    <td>
+                                        @if($eq->responsaveis->count() > 0)
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach($eq->responsaveis as $resp)
+                                                    <span class="badge bg-secondary text-white mb-1" style="font-weight: normal; font-size: 0.85rem;">
+                                                        {{ $resp->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('equipamentos.edit', $eq) }}" class="btn btn-sm btn-outline-primary" title="Editar">✏️</a>
                                     </td>

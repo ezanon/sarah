@@ -3,6 +3,10 @@
 @section('content')
 <div class="container py-4">
     <h3 class="mb-4">🚗 Meus Veículos</h3>
+    
+    <p class="text-muted mb-4">
+        Esta informação poderá ser usada pela Portaria/Segurança para te encontrar em caso de algum evento com seu veículo.
+    </p>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">

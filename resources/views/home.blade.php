@@ -56,11 +56,56 @@
             </div>
         </div>
         
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
+        {{-- Box: Minha Sala --}}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-secondary">📍 Minha Sala</h5>
+                <a href="{{ route('minhasala.index') }}" class="btn btn-sm btn-outline-primary">
+                    {{ $minhaSala ? 'Editar' : 'Cadastrar' }}
+                </a>
+            </div>
+            <div class="card-body">
+                @if($minhaSala)
+                    <div class="row g-2 small">
+                        <div class="col-6 col-md-3">
+                            <span class="d-block text-muted">Tipo</span>
+                            <strong>{{ $minhaSala->tipo->nome ?? '—' }}</strong>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <span class="d-block text-muted">Bloco</span>
+                            <strong>{{ $minhaSala->bloco->nome ?? '—' }}</strong>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <span class="d-block text-muted">Andar</span>
+                            <strong>{{ $minhaSala->andar->numero ?? '—' }}</strong>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <span class="d-block text-muted">Sala</span>
+                            <strong>{{ $minhaSala->numero }}</strong>
+                        </div>
+                        @if($minhaSala->descricao)
+                            <div class="col-12 mt-2">
+                                <span class="d-block text-muted">Descrição</span>
+                                <span class="text-break">{{ $minhaSala->descricao }}</span>
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <p class="mb-0 text-muted">
+                        Você ainda não cadastrou sua sala. 
+                        <a href="{{ route('minhasala.index') }}" class="text-decoration-none">Clique aqui para registrar</a> e aparecer na área de contatos do IGc.
+                    </p>
+                @endif
+            </div>
+        </div>
+        @endcanany        
+        
         @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor'])
         {{-- Box: Minha Foto --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-secondary">📷 Minha Foto</h5>
+                <h5 class="mb-0 text-secondary">📷 Foto Alternativa</h5>
                 <a href="{{ route('foto.index') }}" class="btn btn-sm btn-outline-primary">
                     {{ $fotoCustomUrl ? 'Alterar Foto Alternativa' : 'Enviar Foto Alternativa' }}
                 </a>
@@ -138,51 +183,6 @@
                     </div>
                 @endif
 
-            </div>
-        </div>
-        @endcanany
-
-        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
-        {{-- Box: Minha Sala --}}
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-secondary">📍 Minha Sala</h5>
-                <a href="{{ route('minhasala.index') }}" class="btn btn-sm btn-outline-primary">
-                    {{ $minhaSala ? 'Editar' : 'Cadastrar' }}
-                </a>
-            </div>
-            <div class="card-body">
-                @if($minhaSala)
-                    <div class="row g-2 small">
-                        <div class="col-6 col-md-3">
-                            <span class="d-block text-muted">Tipo</span>
-                            <strong>{{ $minhaSala->tipo->nome ?? '—' }}</strong>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <span class="d-block text-muted">Bloco</span>
-                            <strong>{{ $minhaSala->bloco->nome ?? '—' }}</strong>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <span class="d-block text-muted">Andar</span>
-                            <strong>{{ $minhaSala->andar->numero ?? '—' }}</strong>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <span class="d-block text-muted">Sala</span>
-                            <strong>{{ $minhaSala->numero }}</strong>
-                        </div>
-                        @if($minhaSala->descricao)
-                            <div class="col-12 mt-2">
-                                <span class="d-block text-muted">Descrição</span>
-                                <span class="text-break">{{ $minhaSala->descricao }}</span>
-                            </div>
-                        @endif
-                    </div>
-                @else
-                    <p class="mb-0 text-muted">
-                        Você ainda não cadastrou sua sala. 
-                        <a href="{{ route('minhasala.index') }}" class="text-decoration-none">Clique aqui para registrar</a> e aparecer na área de contatos do IGc.
-                    </p>
-                @endif
             </div>
         </div>
         @endcanany
@@ -273,7 +273,7 @@
         {{-- EQUIPAMENTOS --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 text-secondary">🔬 Meus Equipamentos de Grande Porte</h5>
+                <h5 class="mb-0 text-secondary">🔬 Equipamentos de Grande Porte</h5>
                 <a href="{{ route('equipamentos.index') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
             </div>
             <div class="card-body">
