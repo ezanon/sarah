@@ -269,7 +269,7 @@
         </div>
         @endcanany
 
-        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor','c_pesquisa'])
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor'])
         {{-- EQUIPAMENTOS --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
