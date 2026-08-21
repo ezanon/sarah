@@ -286,6 +286,7 @@
                                     <th>Local</th>
                                     <th>Equipamento</th>
                                     <th>Ano</th>
+                                    <th>Status</th> {{-- Nova coluna --}}
                                     <th></th>
                                 </tr>
                             </thead>
@@ -311,6 +312,16 @@
                                         </td>
                                         <td>{{ $eq->nome }}</td>
                                         <td>{{ $eq->ano_aquisicao ?? '-' }}</td>
+                                        
+                                        {{-- Badge de Status --}}
+                                        <td>
+                                            @if($eq->ativo)
+                                                <span class="badge bg-success text-white">Ativo</span>
+                                            @else
+                                                <span class="badge bg-danger text-white">Inativo</span>
+                                            @endif
+                                        </td>
+
                                         <td>
                                             <a href="{{ route('equipamentos.edit', $eq) }}" class="btn btn-sm btn-outline-secondary" title="Editar">✏️</a>
                                         </td>

@@ -35,12 +35,13 @@
                     <table class="table table-hover mb-0 align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Status</th>
+<!--                                <th>Exibir</th>-->
                                 <th>Patrimônio</th>
                                 <th>Local</th>
                                 <th>Equipamento</th>
                                 <th>Ano</th>
                                 <th>Responsáveis</th>
+                                <th class="text-center">Status</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -48,7 +49,7 @@
                         <tbody>
                             @foreach($equipamentos as $eq)
                                 <tr>
-                                    <td>
+<!--                                    <td>
                                         <form action="{{ route('equipamentos.admin.equipamentos.toggle-ativo', $eq) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
@@ -59,7 +60,7 @@
                                                 <i class="fa {{ $eq->ativo ? 'fa-check' : 'fa-times' }}"></i>
                                             </button>
                                         </form>
-                                    </td>
+                                    </td>-->
                                     <td>
                                         @if($eq->patrimonio)
                                             <span class="badge bg-light text-dark border">{{ $eq->patrimonio }}</span>
@@ -96,6 +97,20 @@
                                             </div>
                                         @else
                                             <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    
+                                    {{-- S T A T U S --}}
+                                    <td class="text-center">
+                                        @if(!$eq->ativo)
+                                            {{-- Ícone de inativo com tooltip mostrando o motivo --}}
+                                            <i class="fa fa-ban text-danger fa-lg" 
+                                               title="Inativo: {{ ucfirst($eq->motivo_inativacao ?? 'Sem motivo informado') }}" 
+                                               style="cursor: help;"></i>
+                                        @else
+                                            {{-- Ícone de ativo --}}
+                                            <i class="fa fa-check-circle text-success fa-lg"
+                                               title="Ativo"></i>
                                         @endif
                                     </td>
                                     

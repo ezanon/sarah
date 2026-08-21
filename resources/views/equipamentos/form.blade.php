@@ -145,6 +145,32 @@
             Adicione ou remova números USP <strong>separados por vírgula</strong> para atualizar a lista acima.
     </div>
     @error('responsaveis_codpes') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    
+    <hr class="my-4">
+    <label class="form-label fw-bold">⚠️ Status do Equipamento</label>
+    <div class="mb-2 p-3 bg-light rounded border">
+        <div class="col-md-4 d-flex align-items-center">
+            <div class="form-check form-switch">
+                {{-- Hidden input garante que o valor 0 seja enviado se o checkbox estiver desmarcado --}}
+                <input type="hidden" name="ativo" value="0">
+                <input class="form-check-input" type="checkbox" name="ativo" id="ativo" value="1" 
+                       {{ old('ativo', $equipamento->ativo ?? true) ? 'checked' : '' }}>
+                <label class="form-check-label fw-bold" for="ativo">
+                    Equipamento Ativo
+                </label>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <label for="motivo_inativacao" class="form-label">Motivo da Inativação</label>
+            <select name="motivo_inativacao" id="motivo_inativacao" class="form-select">
+                <option value="">-- Selecione o motivo --</option>
+                <option value="obsoleto" {{ old('motivo_inativacao', $equipamento->motivo_inativacao ?? '') == 'obsoleto' ? 'selected' : '' }}>Obsoleto</option>
+                <option value="danificado" {{ old('motivo_inativacao', $equipamento->motivo_inativacao ?? '') == 'danificado' ? 'selected' : '' }}>Danificado</option>
+                <option value="doado" {{ old('motivo_inativacao', $equipamento->motivo_inativacao ?? '') == 'doado' ? 'selected' : '' }}>Doado</option>
+            </select>
+            <div class="form-text">Obrigatório apenas se o equipamento for marcado como inativo.</div>
+        </div>
+
 </div>
 
 {{-- 🎭 Script inline (sem @push) --}}
