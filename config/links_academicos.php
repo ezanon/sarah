@@ -14,7 +14,7 @@ return [
         ],
         'google-scholar' => [
             'base_url' => 'https://scholar.google.com/citations?user=',
-            'icone' => 'iconesacademicos/google-scholar.png',
+            'icone' => 'iconesacademicos/google_scholar.png',
             'nome_exibicao' => 'Google Scholar',
         ],
         'scopus' => [
@@ -24,7 +24,7 @@ return [
         ],
         'researchid' => [
             'base_url' => 'https://publons.com/researcher/',
-            'icone' => 'iconesacademicos/researchid.jpg',
+            'icone' => 'iconesacademicos/researcher_id.jpg',
             'nome_exibicao' => 'ResearchID',
         ],
         'researchgate' => [
@@ -34,7 +34,7 @@ return [
         ],
         'bv-fapesp' => [
             'base_url' => 'https://bv.fapesp.br/pt/pesquisador/',
-            'icone' => 'iconesacademicos/bv-fapesp.jpg',
+            'icone' => 'iconesacademicos/bv_fapesp.jpg',
             'nome_exibicao' => 'BV FAPESP',
         ],
     ],
