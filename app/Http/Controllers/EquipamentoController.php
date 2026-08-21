@@ -15,17 +15,12 @@ class EquipamentoController extends Controller
     public function index()
     {
         $user = auth()->user();
-
-        $query = Equipamento::with(['laboratorio.centro', 'criador', 'responsaveis'])
-            ->where(function($q) use ($user) {
-                $q->where('user_id', $user->id)
-                  ->orWhereHas('responsaveis', function($r) use ($user) {
-                      $r->where('user_id', $user->id);
-                  });
-            });
-
-        $equipamentos = $query->latest()->get();
-
+        $equipamentos = Equipamento::with(['laboratorio.centro', 'criador', 'responsaveis'])
+            ->whereHas('responsaveis', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->latest()
+            ->get();
         return view('equipamentos.index', compact('equipamentos'));
     }
 
@@ -43,14 +38,19 @@ class EquipamentoController extends Controller
     {
         $data = $this->validateEquipamento($request);
         $data['user_id'] = auth()->id();
-        $data['ativo'] = true; // ✅ Mantém apenas esta linha
+
+        // ✅ Lógica correta para o status na criação
+        $data['ativo'] = $request->input('ativo') === '1' || $request->input('ativo') === 1;
+        if (!$data['ativo']) {
+            $data['motivo_inativacao'] = $request->input('motivo_inativacao');
+        } else {
+            $data['motivo_inativacao'] = null;
+        }
 
         // Upload da foto
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('fotosEquipamentos', 'public');
         }
-
-        // ❌ REMOVA: $data['ativo'] = $request->has('ativo');
 
         $equipamento = Equipamento::create($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -90,7 +90,6 @@ class EquipamentoController extends Controller
 
         // Gerenciamento da foto
         if ($request->hasFile('foto')) {
-            // Apaga a foto antiga se existir
             if ($equipamento->foto) {
                 Storage::disk('public')->delete($equipamento->foto);
             }
@@ -101,8 +100,14 @@ class EquipamentoController extends Controller
             }
             $data['foto'] = null;
         }
-        
-        //$data['ativo'] = $request->has('ativo');
+
+        // ✅ Lógica correta para o status na edição
+        $data['ativo'] = $request->input('ativo') === '1' || $request->input('ativo') === 1;
+        if (!$data['ativo']) {
+            $data['motivo_inativacao'] = $request->input('motivo_inativacao');
+        } else {
+            $data['motivo_inativacao'] = null;
+        }
 
         $equipamento->update($data);
         $this->sincronizarResponsaveis($equipamento, $request->input('responsaveis_codpes'));
@@ -186,7 +191,10 @@ public function buscarPatrimonio(Request $request)
             'moeda' => 'nullable|in:BRL,USD,EUR',
             'cod_processo_incorporacao' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-            //'ativo' => 'nullable|boolean',
+
+            // ✅ Regras corrigidas para o status
+            'ativo' => 'required|in:0,1',
+            'motivo_inativacao' => 'required_if:ativo,0|nullable|in:obsoleto,danificado,doado',
         ];
 
         return $request->validate($rules);

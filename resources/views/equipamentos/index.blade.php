@@ -29,7 +29,14 @@
                         </div>
                     @endif
                     <div class="card-body">
-                        <h5 class="card-title">{{ $eq->nome }}</h5>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ $eq->nome }}</h5>
+                            @if($eq->ativo)
+                                <span class="badge bg-success text-white">Ativo</span>
+                            @else
+                                <span class="badge bg-danger text-white">Inativo</span>
+                            @endif
+                        </div>
 
                         {{-- Badges do Centro e Laboratório --}}
                         <div class="mb-1">

@@ -21,7 +21,8 @@ class Equipamento extends Model
         'moeda',
         'cod_processo_incorporacao',
         'foto',
-        'ativo'
+        'ativo',
+        'motivo_inativacao',
     ];
 
     protected $casts = [
