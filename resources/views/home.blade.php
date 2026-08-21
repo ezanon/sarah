@@ -11,6 +11,7 @@
             <small class="text-muted">Autenticado via Senha Única USP</small>
         </div>
     
+        @canany(['admin'])
         {{-- Box: Meus Veículos --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -56,7 +57,6 @@
             </div>
         </div>
         
-        @canany(['admin','senhaunica.docente','senhaunica.docenteusp'])
         {{-- Box: Minha Sala --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -269,7 +269,7 @@
         </div>
         @endcanany
 
-        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor'])
+        @canany(['admin','senhaunica.docente','senhaunica.docenteusp','senhaunica.servidor','c_pesquisa'])
         {{-- EQUIPAMENTOS --}}
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
