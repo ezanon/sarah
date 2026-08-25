@@ -21,9 +21,6 @@ Artisan::command('inspire', function () {
 
 Schedule::command('sarah:importar-usuarios')->dailyAt('0:01');
 
-//Schedule::command('relatorio:equipamentos')->dailyAt('6:00');
+Schedule::command('relatorio:equipamentos')->dailyAt('6:00');
 
 Schedule::command('relatorio:docentes')->dailyAt('6:01');
-
-Schedule::command('relatorio:docentes')->dailyAt('6:01');
-
