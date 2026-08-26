@@ -27,6 +27,13 @@ $admin = [
     ...$c_pesquisa,
 ];
 
+$relatorios = [
+    [
+        'text' => 'Relatório dos Departamentos', 
+        'url' => '/painel-relatorios'
+    ],
+];
+
 $menu = [
     [
         # este item de menu será substituido no momento da renderização
@@ -41,6 +48,10 @@ $menu = [
         'text' => 'CPqI',
         'submenu' => $c_pesquisa,
         'can' => 'c_pesquisa',
+    ],
+    [
+        'text' => 'Relatórios',
+        'submenu' => $relatorios,
     ],
 ];
 
