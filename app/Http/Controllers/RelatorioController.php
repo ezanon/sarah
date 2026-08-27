@@ -120,7 +120,7 @@ class RelatorioController extends Controller
             'marginRight' => 1440,
         ]);
 
-        // --- TÍTULO INICIAL (Bem destacado) ---
+        // --- TÍTULO INICIAL ---
         $section->addText("Relatório da Diretoria — {$nomeDepto}", ['bold' => true, 'size' => 20, 'color' => '000000', 'spaceAfter' => 100]);
         $section->addText("Departamento: {$siglaDepto} | Ano de referência: {$ano} | Gerado em: " . now()->format('d/m/Y H:i'), ['italic' => true, 'size' => 11, 'spaceAfter' => 300]);
         
@@ -128,7 +128,6 @@ class RelatorioController extends Controller
         $section->addTextBreak(2);
 
         // --- 1. PROJETOS DE PESQUISA ---
-        // Destaque para a seção (Tamanho maior e cor azul)
         $section->addText('1. Projetos de Pesquisa', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
 
         foreach ($docentes as $docente) {
@@ -137,7 +136,6 @@ class RelatorioController extends Controller
             $projetos = $this->buscarProjetosPorAno($codpes, $ano);
 
             if (!empty($projetos)) {
-                // Destaque para o nome do docente (Tamanho 14, negrito e sublinhado)
                 $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
                 
                 foreach ($projetos as $proj) {
@@ -148,6 +146,7 @@ class RelatorioController extends Controller
                     if (!empty($proj['FINANCIADORES']) && is_array($proj['FINANCIADORES'])) {
                         $financiador = $proj['FINANCIADORES'][0]['NOME-INSTITUICAO'] ?? 'Não informada';
                     }
+                    $financiador = htmlspecialchars($financiador);
                     
                     $integrantes = [];
                     if (!empty($proj['EQUIPE-DO-PROJETO']) && is_array($proj['EQUIPE-DO-PROJETO'])) {
@@ -159,7 +158,6 @@ class RelatorioController extends Controller
                     }
                     $integrantesStr = !empty($integrantes) ? implode(' / ', $integrantes) : 'Não informado';
 
-                    // Uso de addTextRun para deixar APENAS o nome do campo em negrito
                     $textrun = $section->addTextRun(['spaceAfter' => 100]);
                     $textrun->addText('Título do Projeto: ', ['bold' => true]);
                     $textrun->addText($titulo);
@@ -170,7 +168,6 @@ class RelatorioController extends Controller
 
                     $textrun = $section->addTextRun(['spaceAfter' => 100]);
                     $textrun->addText('Número do Processo: ', ['bold' => true]);
-                    // Linhas removidas: a secretaria clicará após os dois pontos e digitará
 
                     $textrun = $section->addTextRun(['spaceAfter' => 100]);
                     $textrun->addText('Duração: ', ['bold' => true]);
@@ -180,24 +177,104 @@ class RelatorioController extends Controller
                     $textrun->addText('Integrantes: ', ['bold' => true]);
                     $textrun->addText($integrantesStr);
 
-                    $textrun = $section->addTextRun(['spaceAfter' => 250]); // Espaço maior antes do próximo projeto
+                    $textrun = $section->addTextRun(['spaceAfter' => 250]);
                     $textrun->addText('Valor: ', ['bold' => true]);
-                    // Linhas removidas
                 }
             }
         }
 
-        // --- DEMAIS SEÇÕES (Placeholders) ---
+        // --- 2. ARTIGOS PUBLICADOS (NOVA SEÇÃO) ---
+        $section->addText('2. Artigos Publicados', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
+            
+            // Busca artigos do ano específico
+            $artigos = $this->buscarArtigosPorAno($codpes, $ano);
+
+            if (!empty($artigos)) {
+                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+                
+                foreach ($artigos as $artigo) {
+                    $titulo = $artigo['TITULO-DO-ARTIGO'] ?? '';
+                    $periodico = $artigo['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '';
+                    $volume = $artigo['VOLUME'] ?? '';
+                    
+                    $paginas = '';
+                    if (!empty($artigo['PAGINA-INICIAL'])) {
+                        $paginas = $artigo['PAGINA-INICIAL'];
+                        if (!empty($artigo['PAGINA-FINAL'])) {
+                            $paginas .= '-' . $artigo['PAGINA-FINAL'];
+                        }
+                    }
+                    
+                    // Extração de autores (tratando NOME-COMPLETO-DO-AUTOR como false quando vazio)
+                    $autores = [];
+                    if (!empty($artigo['AUTORES']) && is_array($artigo['AUTORES'])) {
+                        foreach ($artigo['AUTORES'] as $autor) {
+                            // NOME-COMPLETO-DO-AUTOR pode vir como false (boolean) ou string
+                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
+                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
+                            
+                            // Usa nome completo se for string válida, senão usa nome para citação
+                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
+                                    ? $nomeCompleto 
+                                    : $nomeCitacao;
+                            
+                            if (!empty($nome)) {
+                                $autores[] = $nome;
+                            }
+                        }
+                    }
+                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+
+                    // 1. Título
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Título: ', ['bold' => true]);
+                    $textrun->addText($titulo);
+
+                    // 2. Autores (movido para logo após o título)
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Autores: ', ['bold' => true]);
+                    $textrun->addText($autoresStr);
+
+                    // 3. Periódico
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Periódico: ', ['bold' => true]);
+                    $textrun->addText($periodico);
+
+                    // 4. Volume e Páginas (com "v." e "p.")
+                    $volPagText = '';
+                    if (!empty($volume)) {
+                        $volPagText .= "v. {$volume}";
+                    }
+                    if (!empty($paginas)) {
+                        $volPagText .= ($volPagText ? ', ' : '') . "p. {$paginas}";
+                    }
+
+                    if (!empty($volPagText)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                        $textrun->addText('Volume/Páginas: ', ['bold' => true]);
+                        $textrun->addText($volPagText);
+                    } else {
+                        $section->addTextBreak(2); // Espaço caso não tenha volume/página
+                    }
+                }
+            }
+        }
+
+        // --- DEMAIS SEÇÕES (Placeholders renumerados) ---
         $secoes = [
-            '2. Cursos Extracurriculares',
-            '3. Participação em Eventos Científicos e Culturais',
-            '4. Participação em Conselhos Editoriais e Congêneres',
-            '5. Intercâmbio Científico',
-            '6. Assessoria e Consultoria',
-            '7. Prêmios e Distinções',
-            '8. Entrevistas para Divulgação Científica',
-            '9. Patentes',
-            '10. Categoria de Pesquisador CNPq',
+            '3. Cursos Extracurriculares',
+            '4. Participação em Eventos Científicos e Culturais',
+            '5. Participação em Conselhos Editoriais e Congêneres',
+            '6. Intercâmbio Científico',
+            '7. Assessoria e Consultoria',
+            '8. Prêmios e Distinções',
+            '9. Entrevistas para Divulgação Científica',
+            '10. Patentes',
+            '11. Categoria de Pesquisador CNPq',
         ];
 
         foreach ($secoes as $tituloSecao) {
@@ -205,9 +282,8 @@ class RelatorioController extends Controller
             $section->addText('(Em desenvolvimento)', ['italic' => true]);
         }
 
-        // --- 11. CONSELHO DE DEPARTAMENTO ---
-        $section->addText('11. Composição do Conselho de Departamento', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-        // Apenas a informação de preenchimento manual, sem as linhas de titulares/suplentes
+        // --- 12. CONSELHO DE DEPARTAMENTO ---
+        $section->addText('12. Composição do Conselho de Departamento', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
         $section->addText('⚠️ Campo para preenchimento manual pela secretaria.', ['italic' => true, 'color' => 'FF0000', 'spaceAfter' => 200]);
 
         // --- RODAPÉ ---
@@ -224,6 +300,23 @@ class RelatorioController extends Controller
 
         $caminhoCompleto = $diretorio . '/' . $nomeArquivo;
         $phpWord->save($caminhoCompleto, 'Word2007');
+    }
+
+    /**
+     * Busca artigos publicados no Lattes e filtra pelo ano selecionado
+     */
+    private function buscarArtigosPorAno(string $codpes, int $ano): array
+    {
+        try {
+            // Usa tipo 'periodo' para filtrar apenas o ano específico
+            $artigos = \Uspdev\Replicado\Lattes::listarArtigos($codpes, null, 'periodo', $ano, $ano);
+            
+            return $artigos ?: [];
+
+        } catch (\Exception $e) {
+            \Log::warning("Erro ao buscar artigos para {$codpes}: " . $e->getMessage());
+            return [];
+        }
     }
 
     /**

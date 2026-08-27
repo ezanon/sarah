@@ -19,11 +19,18 @@ class TestarLattesReplicado extends Command
         
         try {
             switch ($funcao){
-                case 'completo': $arrayLattes = Lattes::obterArray($codpes);
+                case 'completo': 
+                    $arrayLattes = Lattes::obterArray($codpes);
                     $arquivo = public_path("lattes_{$codpes}.json");
                     break;
-                case 'projetos': $arrayLattes = Lattes::listarProjetosPesquisa($codpes, null, 'registros', 9999);
+                case 
+                    'projetos': 
+                    $arrayLattes = Lattes::listarProjetosPesquisa($codpes, null, 'registros', 9999);
                     $arquivo = public_path("projetos_{$codpes}.json");
+                    break;
+                case 'artigosAno': 
+                    $arrayLattes = Lattes::listarArtigos($codpes, null, 'periodo', date('Y')-1, date('Y')-1);
+                    $arquivo = public_path("artigos_{$codpes}.json");
                     break;
             }
             
