@@ -232,7 +232,7 @@ class RelatorioController extends Controller
     private function buscarProjetosPorAno(string $codpes, int $ano): array
     {
         try {
-            $projetos = \Uspdev\Replicado\Lattes::listarProjetosPesquisa($codpes);
+            $projetos = \Uspdev\Replicado\Lattes::listarProjetosPesquisa($codpes, null, 'registros', 9999);
             
             if (empty($projetos)) {
                 return [];

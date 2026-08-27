@@ -5,22 +5,28 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Uspdev\Replicado\Lattes;
 
-class TestarReplicado extends Command
+class TestarLattesReplicado extends Command
 {
-    protected $signature = 'lattes:array {codpes}';
+    protected $signature = 'lattes:array {funcao} {codpes}';
     protected $description = 'Testa e exibe o array completo do Lattes de um docente';
 
     public function handle()
     {
         $codpes = $this->argument('codpes');
+        $funcao = $this->argument('funcao');
         
         $this->info("Buscando Lattes do codpes: {$codpes}");
         
         try {
-            $arrayLattes = Lattes::listarProjetosPesquisa($codpes);
-            //$arrayLattes = Lattes::obterArray($codpes);
+            switch ($funcao){
+                case 'completo': $arrayLattes = Lattes::obterArray($codpes);
+                    $arquivo = public_path("lattes_{$codpes}.json");
+                    break;
+                case 'projetos': $arrayLattes = Lattes::listarProjetosPesquisa($codpes, null, 'registros', 9999);
+                    $arquivo = public_path("projetos_{$codpes}.json");
+                    break;
+            }
             
-            $arquivo = public_path("lattes_{$codpes}.json");
             file_put_contents($arquivo, json_encode($arrayLattes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
             
             $this->info("✅ Array salvo em: {$arquivo}");
