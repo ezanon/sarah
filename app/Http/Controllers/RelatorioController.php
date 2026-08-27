@@ -263,10 +263,72 @@ class RelatorioController extends Controller
                 }
             }
         }
+        
+        // --- 3. CURSOS EXTRACURRICULARES ---
+        $section->addText('3. Cursos Extracurriculares', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('3.1 Cursos Ministrados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
+            
+            // Busca cursos ministrados no ano específico
+            $cursos = $this->buscarCursosMinistradosPorAno($codpes, $ano);
+
+            if (!empty($cursos)) {
+                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+                
+                foreach ($cursos as $curso) {
+                    $titulo = $curso['TITULO'] ?? '';
+                    $instituicao = $curso['INSTITUICAO-PROMOTORA-DO-CURSO'] ?? '';
+                    $nivel = $curso['NIVEL-DO-CURSO'] ?? '';
+                    
+                    // Extração de autores (mesma lógica dos artigos)
+                    $autores = [];
+                    if (!empty($curso['AUTORES']) && is_array($curso['AUTORES'])) {
+                        foreach ($curso['AUTORES'] as $autor) {
+                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
+                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
+                            
+                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
+                                    ? $nomeCompleto 
+                                    : $nomeCitacao;
+                            
+                            if (!empty($nome)) {
+                                $autores[] = $nome;
+                            }
+                        }
+                    }
+                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Título: ', ['bold' => true]);
+                    $textrun->addText($titulo);
+
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Instituição Promotora: ', ['bold' => true]);
+                    $textrun->addText($instituicao ?: 'Não informada');
+
+                    if (!empty($nivel)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Nível do Curso: ', ['bold' => true]);
+                        $textrun->addText($nivel);
+                    }
+
+                    $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                    $textrun->addText('Ministrado por: ', ['bold' => true]);
+                    $textrun->addText($autoresStr);
+                }
+            }
+        }
+
+        // Espaço reservado para Cursos Frequentados (será implementado posteriormente)
+        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+        $section->addText('(Em desenvolvimento — será implementado em breve)', ['italic' => true, 'color' => '888888']);
+        
 
         // --- DEMAIS SEÇÕES (Placeholders renumerados) ---
         $secoes = [
-            '3. Cursos Extracurriculares',
             '4. Participação em Eventos Científicos e Culturais',
             '5. Participação em Conselhos Editoriais e Congêneres',
             '6. Intercâmbio Científico',
@@ -342,4 +404,21 @@ class RelatorioController extends Controller
             return [];
         }
     }
+    
+    /**
+     * Busca cursos de curta duração ministrados no Lattes e filtra pelo ano selecionado
+     */
+    private function buscarCursosMinistradosPorAno(string $codpes, int $ano): array
+    {
+        try {
+            // Usa tipo 'periodo' para filtrar apenas o ano específico
+            $cursos = \Uspdev\Replicado\Lattes::listarCursosCurtaDuracao($codpes, null, 'periodo', $ano, $ano);
+            
+            return $cursos ?: [];
+
+        } catch (\Exception $e) {
+            \Log::warning("Erro ao buscar cursos ministrados para {$codpes}: " . $e->getMessage());
+            return [];
+        }
+    }    
 }
