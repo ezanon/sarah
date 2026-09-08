@@ -32,7 +32,7 @@ class RelatorioController extends Controller
         $departamentos = config('departamentos.codigos', []);
         return view('relatorios.criar', compact('departamentos'));
     }
-
+    
     /**
      * Gera o relatório WORD (.docx) e salva em public/relatorios/diretoria/
      */
@@ -326,13 +326,68 @@ class RelatorioController extends Controller
         }
 
         // Espaço reservado para Cursos Frequentados (será implementado posteriormente)
-        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
-        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); // <-- Alterado para destaque
+        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
         
         // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
         $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); // <-- Alterado para destaque
+        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
 
+        // --- 5. Participação em Conselhos Editoriais e Congêneres ---
+        $section->addText('5. Participação em Conselhos Editoriais e Congêneres', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('[ C O M P L E T E ]', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
+        
+        // --- 6. Participação em Conselhos Editoriais e Congêneres ---
+        $section->addText('6. Intercâmbio Científico', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('[ C O M P L E T E ]', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
+        
+        // --- 7. Participação em Conselhos Editoriais e Congêneres ---
+        $section->addText('7. Assessoria e Consultoria', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('[ C O M P L E T E ]', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
+
+        // --- 8. PRÊMIOS E DISTINÇÕES ---
+        $section->addText('8. Prêmios e Distinções', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
+            
+            // A biblioteca retorna um array de strings formatadas ("Nome - Ano: XXXX") ou false
+            $premios = \Uspdev\Replicado\Lattes::listarPremios($codpes);
+
+            if (!empty($premios) && is_array($premios)) {
+                // Filtra apenas os prêmios do ano de referência do relatório
+                $premiosDoAno = array_filter($premios, function($premioStr) use ($ano) {
+                    return str_contains($premioStr, "- Ano: {$ano}");
+                });
+
+                if (!empty($premiosDoAno)) {
+                    $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+                    
+                    foreach ($premiosDoAno as $premioStr) {
+                        // Separa a string "Título do Prêmio - Ano: 2023" em duas partes
+                        $partes = explode(' - Ano: ', $premioStr);
+                        $titulo = trim($partes[0] ?? 'Não informado');
+                        $anoPremio = trim($partes[1] ?? '');
+
+                        // Linha 1: Título em negrito
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Título: ', ['bold' => true]);
+                        $textrun->addText($titulo);
+
+                        // Linha 2: Ano em negrito + espaçamento maior no final do bloco
+                        if (!empty($anoPremio)) {
+                            $textrun = $section->addTextRun(['spaceAfter' => 200]); 
+                            $textrun->addText('Ano: ', ['bold' => true]);
+                            $textrun->addText($anoPremio);
+                        } else {
+                            $section->addTextBreak(1); // Espaçamento caso não tenha ano
+                        }
+                    }
+                }
+            }
+        }       
+        
         // --- 9. ENTREVISTAS PARA DIVULGAÇÃO CIENTÍFICA ---
         $section->addText('9. Entrevistas para Divulgação Científica', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
 
@@ -386,11 +441,6 @@ class RelatorioController extends Controller
 
         // --- DEMAIS SEÇÕES (Placeholders renumerados) ---
         $secoes = [
-            '5. Participação em Conselhos Editoriais e Congêneres',
-            '6. Intercâmbio Científico',
-            '7. Assessoria e Consultoria',
-            '8. Prêmios e Distinções',
-            '10. Patentes',
             '11. Categoria de Pesquisador CNPq',
         ];
 
@@ -475,7 +525,7 @@ class RelatorioController extends Controller
             \Log::warning("Erro ao buscar cursos ministrados para {$codpes}: " . $e->getMessage());
             return [];
         }
-    }    
+    } 
     
     /**
      * Busca entrevistas e programas de rádio/TV no Lattes e filtra pelo ano selecionado
