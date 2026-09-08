@@ -38,6 +38,9 @@ class RelatorioController extends Controller
      */
     public function store(Request $request)
     {
+        
+        set_time_limit(300);
+        
         \Log::info('=== INÍCIO DA GERAÇÃO DO RELATÓRIO (WORD) ===');
 
         $request->validate([
@@ -324,17 +327,69 @@ class RelatorioController extends Controller
 
         // Espaço reservado para Cursos Frequentados (será implementado posteriormente)
         $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
-        $section->addText('(Em desenvolvimento — será implementado em breve)', ['italic' => true, 'color' => '888888']);
+        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); // <-- Alterado para destaque
+        
+        // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
+        $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); // <-- Alterado para destaque
+
+        // --- 9. ENTREVISTAS PARA DIVULGAÇÃO CIENTÍFICA ---
+        $section->addText('9. Entrevistas para Divulgação Científica', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
+            
+            // Busca entrevistas/programas de TV/Rádio do ano específico
+            $entrevistas = $this->buscarEntrevistasPorAno($codpes, $ano);
+
+            if (!empty($entrevistas)) {
+                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+                
+                foreach ($entrevistas as $entrevista) {
+                    $titulo = $entrevista['TITULO'] ?? '';
+                    $emissora = $entrevista['EMISSORA'] ?? '';
+                    $tema = $entrevista['TEMA'] ?? '';
+                    $data = $entrevista['DATA-DA-APRESENTACAO'] ?? '';
+
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Título: ', ['bold' => true]);
+                    $textrun->addText($titulo);
+
+                    if (!empty($emissora)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Emissora/Meio: ', ['bold' => true]);
+                        $textrun->addText($emissora);
+                    }
+
+                    if (!empty($tema)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Tema: ', ['bold' => true]);
+                        $textrun->addText($tema);
+                    }
+
+                    if (!empty($data)) {
+                        // Formata a data do Lattes (ddmmyyyy) para dd/mm/yyyy
+                        if (preg_match('/^(\d{2})(\d{2})(\d{4})$/', $data, $matches)) {
+                            $data = "{$matches[1]}/{$matches[2]}/{$matches[3]}";
+                        }
+                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                        $textrun->addText('Data: ', ['bold' => true]);
+                        $textrun->addText($data);
+                    } else {
+                        $section->addTextBreak(2); // Espaço caso não tenha data
+                    }
+                }
+            }
+        } 
         
 
         // --- DEMAIS SEÇÕES (Placeholders renumerados) ---
         $secoes = [
-            '4. Participação em Eventos Científicos e Culturais',
             '5. Participação em Conselhos Editoriais e Congêneres',
             '6. Intercâmbio Científico',
             '7. Assessoria e Consultoria',
             '8. Prêmios e Distinções',
-            '9. Entrevistas para Divulgação Científica',
             '10. Patentes',
             '11. Categoria de Pesquisador CNPq',
         ];
@@ -421,4 +476,22 @@ class RelatorioController extends Controller
             return [];
         }
     }    
+    
+    /**
+     * Busca entrevistas e programas de rádio/TV no Lattes e filtra pelo ano selecionado
+     */
+    private function buscarEntrevistasPorAno(string $codpes, int $ano): array
+    {
+        try {
+            // Usa tipo 'periodo' para filtrar apenas o ano específico
+            $entrevistas = \Uspdev\Replicado\Lattes::listarRadioTV($codpes, null, 'periodo', $ano, $ano);
+            
+            return $entrevistas ?: [];
+
+        } catch (\Exception $e) {
+            \Log::warning("Erro ao buscar entrevistas para {$codpes}: " . $e->getMessage());
+            return [];
+        }
+    }
+    
 }
