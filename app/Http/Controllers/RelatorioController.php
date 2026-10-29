@@ -326,60 +326,109 @@ class RelatorioController extends Controller
             }
         }
 
-// --- 3.2 Cursos Frequentados ---
-$section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+        // --- 3.2 Cursos Frequentados ---
+        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
 
-foreach ($docentes as $docente) {
-    $codpes = $docente['codpes'];
-    $nomeDocente = $docente['nompes'] ?? 'Docente';
-    
-    // Busca cursos frequentados do ano específico
-    $cursos = $this->buscarCursosFrequentadosPorAno($codpes, $ano);
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
 
-    if (!empty($cursos)) {
-        $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-        
-        foreach ($cursos as $curso) {
-            $titulo = $curso['NOME-CURSO'] ?? '';
-            $instituicao = $curso['NOME-INSTITUICAO'] ?? '';
-            $cargaHoraria = $curso['CARGA-HORARIA'] ?? '';
-            $status = $curso['STATUS-DO-CURSO'] ?? '';
-            $tipo = $curso['TIPO'] ?? '';
+            // Busca cursos frequentados do ano específico
+            $cursos = $this->buscarCursosFrequentadosPorAno($codpes, $ano);
 
-            // Título do curso
-            $textrun = $section->addTextRun(['spaceAfter' => 80]);
-            $textrun->addText('Curso: ', ['bold' => true]);
-            $textrun->addText($titulo);
+            if (!empty($cursos)) {
+                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
 
-            // Instituição
-            if (!empty($instituicao)) {
-                $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                $textrun->addText('Instituição: ', ['bold' => true]);
-                $textrun->addText($instituicao);
-            }
+                foreach ($cursos as $curso) {
+                    $titulo = $curso['NOME-CURSO'] ?? '';
+                    $instituicao = $curso['NOME-INSTITUICAO'] ?? '';
+                    $cargaHoraria = $curso['CARGA-HORARIA'] ?? '';
+                    $status = $curso['STATUS-DO-CURSO'] ?? '';
+                    $tipo = $curso['TIPO'] ?? '';
 
-            // Carga horária
-            if (!empty($cargaHoraria)) {
-                $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                $textrun->addText('Carga Horária: ', ['bold' => true]);
-                $textrun->addText($cargaHoraria . ' horas');
-            }
+                    // Título do curso
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Curso: ', ['bold' => true]);
+                    $textrun->addText($titulo);
 
-            // Status
-            if (!empty($status)) {
-                $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                $textrun->addText('Status: ', ['bold' => true]);
-                $textrun->addText($status);
-            } else {
-                $section->addTextBreak(1);
+                    // Instituição
+                    if (!empty($instituicao)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Instituição: ', ['bold' => true]);
+                        $textrun->addText($instituicao);
+                    }
+
+                    // Carga horária
+                    if (!empty($cargaHoraria)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Carga Horária: ', ['bold' => true]);
+                        $textrun->addText($cargaHoraria . ' horas');
+                    }
+
+                    // Status
+                    if (!empty($status)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                        $textrun->addText('Status: ', ['bold' => true]);
+                        $textrun->addText($status);
+                    } else {
+                        $section->addTextBreak(1);
+                    }
+                }
             }
         }
-    }
-}
         
         // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
         $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
+
+        foreach ($docentes as $docente) {
+            $codpes = $docente['codpes'];
+            $nomeDocente = $docente['nompes'] ?? 'Docente';
+            
+            // Busca participações em eventos do ano específico
+            $eventos = $this->buscarEventosPorAno($codpes, $ano);
+
+            if (!empty($eventos)) {
+                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+                
+                foreach ($eventos as $evento) {
+                    $titulo = $evento['TITULO'] ?? '';
+                    $nomeEvento = $evento['NOME-DO-EVENTO'] ?? '';
+                    $instituicao = $evento['NOME-INSTITUICAO'] ?? '';
+                    $cidade = $evento['CIDADE-DO-EVENTO'] ?? '';
+                    $tipoParticipacao = $evento['TIPO-PARTICIPACAO'] ?? '';
+
+                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                    $textrun->addText('Título: ', ['bold' => true]);
+                    $textrun->addText($titulo);
+
+                    if (!empty($nomeEvento)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Evento: ', ['bold' => true]);
+                        $textrun->addText($nomeEvento);
+                    }
+
+                    if (!empty($instituicao)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Instituição: ', ['bold' => true]);
+                        $textrun->addText($instituicao);
+                    }
+
+                    if (!empty($cidade)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                        $textrun->addText('Local: ', ['bold' => true]);
+                        $textrun->addText($cidade);
+                    }
+
+                    if (!empty($tipoParticipacao)) {
+                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                        $textrun->addText('Tipo de Participação: ', ['bold' => true]);
+                        $textrun->addText($tipoParticipacao);
+                    } else {
+                        $section->addTextBreak(1);
+                    }
+                }
+            }
+        }
 
         // --- 5. Participação em Conselhos Editoriais e Congêneres ---
         $section->addText('5. Participação em Conselhos Editoriais e Congêneres', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
@@ -605,6 +654,23 @@ foreach ($docentes as $docente) {
 
         } catch (\Exception $e) {
             \Log::warning("Erro ao buscar cursos frequentados para {$codpes}: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Busca participações em eventos no Lattes e filtra pelo ano selecionado
+     */
+    private function buscarEventosPorAno(string $codpes, int $ano): array
+    {
+        try {
+            // Usa o novo método que percorre as tags de PARTICIPACAO-EM-EVENTOS-CONGRESSOS
+            $eventos = \Uspdev\Replicado\Lattes::listarParticipacaoEventos($codpes, $ano, $ano);
+            
+            return $eventos ?: [];
+
+        } catch (\Exception $e) {
+            \Log::warning("Erro ao buscar eventos para {$codpes}: " . $e->getMessage());
             return [];
         }
     }
