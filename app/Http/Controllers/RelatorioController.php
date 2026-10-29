@@ -134,532 +134,586 @@ class RelatorioController extends Controller
         $section->addText('⚠️ Atenção: Este relatório foi gerado automaticamente. A secretaria deve revisar, complementar e formatar conforme o modelo oficial antes do envio.', ['color' => 'FF0000', 'size' => 10]);
         $section->addTextBreak(2);
 
-        // --- 1. PROJETOS DE PESQUISA ---
-        $section->addText('1. Projetos de Pesquisa', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            $projetos = $this->buscarProjetosPorAno($codpes, $ano);
-
-            if (!empty($projetos)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($projetos as $proj) {
-                    $titulo = $proj['NOME-DO-PROJETO'] ?? '';
-                    $duracao = ($proj['ANO-INICIO'] ?? '') . ' a ' . ($proj['ANO-FIM'] ?: 'Atual');
-                    
-                    $financiador = 'Não informada';
-                    if (!empty($proj['FINANCIADORES']) && is_array($proj['FINANCIADORES'])) {
-                        $financiador = $proj['FINANCIADORES'][0]['NOME-INSTITUICAO'] ?? 'Não informada';
-                    }
-                    $financiador = htmlspecialchars($financiador);
-                    
-                    $integrantes = [];
-                    if (!empty($proj['EQUIPE-DO-PROJETO']) && is_array($proj['EQUIPE-DO-PROJETO'])) {
-                        foreach ($proj['EQUIPE-DO-PROJETO'] as $integrante) {
-                            $nome = $integrante['NOME-COMPLETO-DO-AUTOR'] ?? '';
-                            $flag = $integrante['COORDENACAO'] ?? 'NAO';
-                            $integrantes[] = $nome . ($flag === 'SIM' ? ' (Coordenador)' : '');
-                        }
-                    }
-                    $integrantesStr = !empty($integrantes) ? implode(' / ', $integrantes) : 'Não informado';
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
-                    $textrun->addText('Título do Projeto: ', ['bold' => true]);
-                    $textrun->addText($titulo);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
-                    $textrun->addText('Agência Financiadora: ', ['bold' => true]);
-                    $textrun->addText($financiador);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
-                    $textrun->addText('Número do Processo: ', ['bold' => true]);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
-                    $textrun->addText('Duração: ', ['bold' => true]);
-                    $textrun->addText($duracao);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
-                    $textrun->addText('Integrantes: ', ['bold' => true]);
-                    $textrun->addText($integrantesStr);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 250]);
-                    $textrun->addText('Valor: ', ['bold' => true]);
-                }
-            }
-        }
-
-        // --- 2. ARTIGOS PUBLICADOS (NOVA SEÇÃO) ---
-        $section->addText('2. Artigos Publicados', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            
-            // Busca artigos do ano específico
-            $artigos = $this->buscarArtigosPorAno($codpes, $ano);
-
-            if (!empty($artigos)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($artigos as $artigo) {
-                    $titulo = $artigo['TITULO-DO-ARTIGO'] ?? '';
-                    $periodico = $artigo['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '';
-                    $volume = $artigo['VOLUME'] ?? '';
-                    
-                    $paginas = '';
-                    if (!empty($artigo['PAGINA-INICIAL'])) {
-                        $paginas = $artigo['PAGINA-INICIAL'];
-                        if (!empty($artigo['PAGINA-FINAL'])) {
-                            $paginas .= '-' . $artigo['PAGINA-FINAL'];
-                        }
-                    }
-                    
-                    // Extração de autores (tratando NOME-COMPLETO-DO-AUTOR como false quando vazio)
-                    $autores = [];
-                    if (!empty($artigo['AUTORES']) && is_array($artigo['AUTORES'])) {
-                        foreach ($artigo['AUTORES'] as $autor) {
-                            // NOME-COMPLETO-DO-AUTOR pode vir como false (boolean) ou string
-                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
-                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
-                            
-                            // Usa nome completo se for string válida, senão usa nome para citação
-                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
-                                    ? $nomeCompleto 
-                                    : $nomeCitacao;
-                            
-                            if (!empty($nome)) {
-                                $autores[] = $nome;
-                            }
-                        }
-                    }
-                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
-
-                    // 1. Título
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Título: ', ['bold' => true]);
-                    $textrun->addText($titulo);
-
-                    // 2. Autores (movido para logo após o título)
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Autores: ', ['bold' => true]);
-                    $textrun->addText($autoresStr);
-
-                    // 3. Periódico
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Periódico: ', ['bold' => true]);
-                    $textrun->addText($periodico);
-
-                    // 4. Volume e Páginas (com "v." e "p.")
-                    $volPagText = '';
-                    if (!empty($volume)) {
-                        $volPagText .= "v. {$volume}";
-                    }
-                    if (!empty($paginas)) {
-                        $volPagText .= ($volPagText ? ', ' : '') . "p. {$paginas}";
-                    }
-
-                    if (!empty($volPagText)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Volume/Páginas: ', ['bold' => true]);
-                        $textrun->addText($volPagText);
-                    } else {
-                        $section->addTextBreak(2); // Espaço caso não tenha volume/página
-                    }
-                }
-            }
-        }
+//        // --- 1. PROJETOS DE PESQUISA ---
+//        $section->addText('1. Projetos de Pesquisa', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            $projetos = $this->buscarProjetosPorAno($codpes, $ano);
+//
+//            if (!empty($projetos)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($projetos as $proj) {
+//                    $titulo = $proj['NOME-DO-PROJETO'] ?? '';
+//                    $duracao = ($proj['ANO-INICIO'] ?? '') . ' a ' . ($proj['ANO-FIM'] ?: 'Atual');
+//                    
+//                    $financiador = 'Não informada';
+//                    if (!empty($proj['FINANCIADORES']) && is_array($proj['FINANCIADORES'])) {
+//                        $financiador = $proj['FINANCIADORES'][0]['NOME-INSTITUICAO'] ?? 'Não informada';
+//                    }
+//                    $financiador = htmlspecialchars($financiador);
+//                    
+//                    $integrantes = [];
+//                    if (!empty($proj['EQUIPE-DO-PROJETO']) && is_array($proj['EQUIPE-DO-PROJETO'])) {
+//                        foreach ($proj['EQUIPE-DO-PROJETO'] as $integrante) {
+//                            $nome = $integrante['NOME-COMPLETO-DO-AUTOR'] ?? '';
+//                            $flag = $integrante['COORDENACAO'] ?? 'NAO';
+//                            $integrantes[] = $nome . ($flag === 'SIM' ? ' (Coordenador)' : '');
+//                        }
+//                    }
+//                    $integrantesStr = !empty($integrantes) ? implode(' / ', $integrantes) : 'Não informado';
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
+//                    $textrun->addText('Título do Projeto: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
+//                    $textrun->addText('Agência Financiadora: ', ['bold' => true]);
+//                    $textrun->addText($financiador);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
+//                    $textrun->addText('Número do Processo: ', ['bold' => true]);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
+//                    $textrun->addText('Duração: ', ['bold' => true]);
+//                    $textrun->addText($duracao);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 100]);
+//                    $textrun->addText('Integrantes: ', ['bold' => true]);
+//                    $textrun->addText($integrantesStr);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 250]);
+//                    $textrun->addText('Valor: ', ['bold' => true]);
+//                }
+//            }
+//        }
+//
+//        // --- 2. ARTIGOS PUBLICADOS (NOVA SEÇÃO) ---
+//        $section->addText('2. Artigos Publicados', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            
+//            // Busca artigos do ano específico
+//            $artigos = $this->buscarArtigosPorAno($codpes, $ano);
+//
+//            if (!empty($artigos)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($artigos as $artigo) {
+//                    $titulo = $this->sanitizeForWord($artigo['TITULO-DO-ARTIGO'] ?? '');
+//                    $periodico = $this->sanitizeForWord($artigo['TITULO-DO-PERIODICO-OU-REVISTA'] ?? '');
+//                    $volume = $artigo['VOLUME'] ?? '';
+//                    
+//                    $paginas = '';
+//                    if (!empty($artigo['PAGINA-INICIAL'])) {
+//                        $paginas = $artigo['PAGINA-INICIAL'];
+//                        if (!empty($artigo['PAGINA-FINAL'])) {
+//                            $paginas .= '-' . $artigo['PAGINA-FINAL'];
+//                        }
+//                    }
+//                    
+//                    // Extração de autores (tratando NOME-COMPLETO-DO-AUTOR como false quando vazio)
+//                    $autores = [];
+//                    if (!empty($artigo['AUTORES']) && is_array($artigo['AUTORES'])) {
+//                        foreach ($artigo['AUTORES'] as $autor) {
+//                            // NOME-COMPLETO-DO-AUTOR pode vir como false (boolean) ou string
+//                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
+//                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
+//                            
+//                            // Usa nome completo se for string válida, senão usa nome para citação
+//                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
+//                                    ? $nomeCompleto 
+//                                    : $nomeCitacao;
+//                            
+//                            if (!empty($nome)) {
+//                                $autores[] = $nome;
+//                            }
+//                        }
+//                    }
+//                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+//
+//                    // 1. Título
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Título: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    // 2. Autores (movido para logo após o título)
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Autores: ', ['bold' => true]);
+//                    $textrun->addText($autoresStr);
+//
+//                    // 3. Periódico
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Periódico: ', ['bold' => true]);
+//                    $textrun->addText($periodico);
+//
+//                    // 4. Volume e Páginas (com "v." e "p.")
+//                    $volPagText = '';
+//                    if (!empty($volume)) {
+//                        $volPagText .= "v. {$volume}";
+//                    }
+//                    if (!empty($paginas)) {
+//                        $volPagText .= ($volPagText ? ', ' : '') . "p. {$paginas}";
+//                    }
+//
+//                    if (!empty($volPagText)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Volume/Páginas: ', ['bold' => true]);
+//                        $textrun->addText($volPagText);
+//                    } else {
+//                        $section->addTextBreak(2); // Espaço caso não tenha volume/página
+//                    }
+//                }
+//            }
+//        }
+//        
+//        // --- 3. CURSOS EXTRACURRICULARES ---
+//        $section->addText('3. Cursos Extracurriculares', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//        $section->addText('3.1 Cursos Ministrados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            
+//            // Busca cursos ministrados no ano específico
+//            $cursos = $this->buscarCursosMinistradosPorAno($codpes, $ano);
+//
+//            if (!empty($cursos)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($cursos as $curso) {
+//                    $titulo = $curso['TITULO'] ?? '';
+//                    $instituicao = $curso['INSTITUICAO-PROMOTORA-DO-CURSO'] ?? '';
+//                    $nivel = $curso['NIVEL-DO-CURSO'] ?? '';
+//                    
+//                    // Extração de autores (mesma lógica dos artigos)
+//                    $autores = [];
+//                    if (!empty($curso['AUTORES']) && is_array($curso['AUTORES'])) {
+//                        foreach ($curso['AUTORES'] as $autor) {
+//                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
+//                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
+//                            
+//                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
+//                                    ? $nomeCompleto 
+//                                    : $nomeCitacao;
+//                            
+//                            if (!empty($nome)) {
+//                                $autores[] = $nome;
+//                            }
+//                        }
+//                    }
+//                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Título: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Instituição Promotora: ', ['bold' => true]);
+//                    $textrun->addText($instituicao ?: 'Não informada');
+//
+//                    if (!empty($nivel)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Nível do Curso: ', ['bold' => true]);
+//                        $textrun->addText($nivel);
+//                    }
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                    $textrun->addText('Ministrado por: ', ['bold' => true]);
+//                    $textrun->addText($autoresStr);
+//                }
+//            }
+//        }
+//
+//        // --- 3.2 Cursos Frequentados ---
+//        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//
+//            // Busca cursos frequentados do ano específico
+//            $cursos = $this->buscarCursosFrequentadosPorAno($codpes, $ano);
+//
+//            if (!empty($cursos)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//
+//                foreach ($cursos as $curso) {
+//                    $titulo = $curso['NOME-CURSO'] ?? '';
+//                    $instituicao = $curso['NOME-INSTITUICAO'] ?? '';
+//                    $cargaHoraria = $curso['CARGA-HORARIA'] ?? '';
+//                    $status = $curso['STATUS-DO-CURSO'] ?? '';
+//                    $tipo = $curso['TIPO'] ?? '';
+//
+//                    // Título do curso
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Curso: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    // Instituição
+//                    if (!empty($instituicao)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Instituição: ', ['bold' => true]);
+//                        $textrun->addText($instituicao);
+//                    }
+//
+//                    // Carga horária
+//                    if (!empty($cargaHoraria)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Carga Horária: ', ['bold' => true]);
+//                        $textrun->addText($cargaHoraria . ' horas');
+//                    }
+//
+//                    // Status
+//                    if (!empty($status)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Status: ', ['bold' => true]);
+//                        $textrun->addText($status);
+//                    } else {
+//                        $section->addTextBreak(1);
+//                    }
+//                }
+//            }
+//        }
+//        
+//        // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
+//        $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            
+//            // Busca participações em eventos do ano específico
+//            $eventos = $this->buscarEventosPorAno($codpes, $ano);
+//
+//            if (!empty($eventos)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($eventos as $evento) {
+//                    $titulo = $this->sanitizeForWord($evento['TITULO'] ?? '');
+//                    $nomeEvento = $this->sanitizeForWord($evento['NOME-DO-EVENTO'] ?? '');
+//                    $instituicao = $this->sanitizeForWord($evento['NOME-INSTITUICAO'] ?? '');
+//                    $cidade = $this->sanitizeForWord($evento['CIDADE-DO-EVENTO'] ?? '');
+//                    $tipoParticipacao = $this->sanitizeForWord($evento['TIPO-PARTICIPACAO'] ?? '');
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Título: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    if (!empty($nomeEvento)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Evento: ', ['bold' => true]);
+//                        $textrun->addText($nomeEvento);
+//                    }
+//
+//                    if (!empty($instituicao)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Instituição: ', ['bold' => true]);
+//                        $textrun->addText($instituicao);
+//                    }
+//
+//                    if (!empty($cidade)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Local: ', ['bold' => true]);
+//                        $textrun->addText($cidade);
+//                    }
+//
+//                    if (!empty($tipoParticipacao)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Tipo de Participação: ', ['bold' => true]);
+//                        $textrun->addText($tipoParticipacao);
+//                    } else {
+//                        $section->addTextBreak(1);
+//                    }
+//                }
+//            }
+//        }
+//
+//        // --- 5. PARTICIPAÇÃO EM CONSELHOS EDITORIAIS E CONGÊNERES ---
+//        \Log::info('Iniciando seção 5 - Conselhos Editoriais');
+//        $section->addText('5. Participação em Conselhos Editoriais e Congêneres', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//
+//            \Log::info("Buscando conselhos editoriais para {$nomeDocente} (codpes: {$codpes})");
+//
+//            try {
+//                $atuacoes = $this->buscarCorposEditoriaisPorAno($codpes, $ano);
+//                \Log::info("Retornou " . (is_array($atuacoes) ? count($atuacoes) : '0') . " atuações");
+//            } catch (\Exception $e) {
+//                \Log::error("Erro ao buscar conselhos para {$nomeDocente}: " . $e->getMessage());
+//                continue;
+//            }
+//
+//            if (!empty($atuacoes)) {
+//                $section->addText($this->sanitizeForWord($nomeDocente), ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//
+//            foreach ($atuacoes as $index => $atuacao) {
+//                try {
+//                    // Aplica sanitização em todos os campos para remover & soltos, espaços extras e caracteres de controle
+//                    $periodico = $this->sanitizeForWord($atuacao['NOME-PERIODICO'] ?? '');
+//                    $tipoVinculo = $this->sanitizeForWord($atuacao['TIPO-VINCULO'] ?? '');
+//                    $periodoInicio = $this->sanitizeForWord($atuacao['PERIODO-INICIO'] ?? '');
+//                    $periodoFim = $this->sanitizeForWord($atuacao['PERIODO-FIM'] ?? '');
+//
+//                    \Log::info("Processando atuação {$index} para {$nomeDocente}: {$periodico}");
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Periódico/Órgão: ', ['bold' => true]);
+//                    $textrun->addText($periodico);
+//
+//                    if (!empty($tipoVinculo)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Tipo de Vínculo: ', ['bold' => true]);
+//                        $textrun->addText($tipoVinculo);
+//                    }
+//
+//                    if (!empty($periodoInicio) || !empty($periodoFim)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Período: ', ['bold' => true]);
+//                        // Garante que não haja " / atual" ou algo quebrado
+//                        $periodoFormatado = trim("{$periodoInicio} a {$periodoFim}", " a");
+//                        $textrun->addText($periodoFormatado);
+//                    } else {
+//                        $section->addTextBreak(1);
+//                    }
+//                } catch (\Exception $e) {
+//                    \Log::error("Erro ao processar atuação {$index} para {$nomeDocente}: " . $e->getMessage());
+//                    \Log::error("Dados brutos da atuação: " . json_encode($atuacao));
+//                    continue;
+//                }
+//            }
+//            }
+//        }
+//        \Log::info('Finalizada seção 5 - Conselhos Editoriais');       
+//
+//        // --- 8. PRÊMIOS E DISTINÇÕES ---
+//        $section->addText('8. Prêmios e Distinções', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            
+//            // A biblioteca retorna um array de strings formatadas ("Nome - Ano: XXXX") ou false
+//            $premios = \Uspdev\Replicado\Lattes::listarPremios($codpes);
+//
+//            if (!empty($premios) && is_array($premios)) {
+//                // Filtra apenas os prêmios do ano de referência do relatório
+//                $premiosDoAno = array_filter($premios, function($premioStr) use ($ano) {
+//                    return str_contains($premioStr, "- Ano: {$ano}");
+//                });
+//
+//                if (!empty($premiosDoAno)) {
+//                    $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                    
+//                    foreach ($premiosDoAno as $premioStr) {
+//                        // Separa a string "Título do Prêmio - Ano: 2023" em duas partes
+//                        $partes = explode(' - Ano: ', $premioStr);
+//                        $titulo = trim($partes[0] ?? 'Não informado');
+//                        $anoPremio = trim($partes[1] ?? '');
+//
+//                        // Linha 1: Título em negrito
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Título: ', ['bold' => true]);
+//                        $textrun->addText($titulo);
+//
+//                        // Linha 2: Ano em negrito + espaçamento maior no final do bloco
+//                        if (!empty($anoPremio)) {
+//                            $textrun = $section->addTextRun(['spaceAfter' => 200]); 
+//                            $textrun->addText('Ano: ', ['bold' => true]);
+//                            $textrun->addText($anoPremio);
+//                        } else {
+//                            $section->addTextBreak(1); // Espaçamento caso não tenha ano
+//                        }
+//                    }
+//                }
+//            }
+//        }       
+//        
+//        // --- 9. ENTREVISTAS PARA DIVULGAÇÃO CIENTÍFICA ---
+//        $section->addText('9. Entrevistas para Divulgação Científica', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $docente['nompes'] ?? 'Docente';
+//            
+//            // Busca entrevistas/programas de TV/Rádio do ano específico
+//            $entrevistas = $this->buscarEntrevistasPorAno($codpes, $ano);
+//
+//            if (!empty($entrevistas)) {
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($entrevistas as $entrevista) {
+//                    $titulo = $this->sanitizeForWord($entrevista['TITULO'] ?? '');
+//                    $emissora = $this->sanitizeForWord($entrevista['EMISSORA'] ?? '');
+//                    $tema = $this->sanitizeForWord($entrevista['TEMA'] ?? '');
+//                    $data = $entrevista['DATA-DA-APRESENTACAO'] ?? '';
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Título: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    if (!empty($emissora)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Emissora/Meio: ', ['bold' => true]);
+//                        $textrun->addText($emissora);
+//                    }
+//
+//                    if (!empty($tema)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Tema: ', ['bold' => true]);
+//                        $textrun->addText($tema);
+//                    }
+//
+//                    if (!empty($data)) {
+//                        // Formata a data do Lattes (ddmmyyyy) para dd/mm/yyyy
+//                        if (preg_match('/^(\d{2})(\d{2})(\d{4})$/', $data, $matches)) {
+//                            $data = "{$matches[1]}/{$matches[2]}/{$matches[3]}";
+//                        }
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Data: ', ['bold' => true]);
+//                        $textrun->addText($data);
+//                    } else {
+//                        $section->addTextBreak(2); // Espaço caso não tenha data
+//                    }
+//                }
+//            }
+//        } 
+//
+//        // --- 10. PATENTES ---
+//        $section->addText('10. Patentes', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+//
+//        $temPatentesNoAno = false; // Flag para verificar se há pelo menos uma patente no ano
+//
+//        foreach ($docentes as $docente) {
+//            $codpes = $docente['codpes'];
+//            $nomeDocente = $this->sanitizeForWord($docente['nompes'] ?? 'Docente');
+//            
+//            // Busca patentes do ano específico
+//            $patentes = $this->buscarPatentesPorAno($codpes, $ano);
+//
+//            if (!empty($patentes)) {
+//                $temPatentesNoAno = true;
+//                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+//                
+//                foreach ($patentes as $patente) {
+//                    $titulo = $this->sanitizeForWord($patente['TITULO'] ?? '');
+//                    $finalidade = $this->sanitizeForWord($patente['FINALIDADE'] ?? '');
+//                    $instituicao = $this->sanitizeForWord($patente['INSTITUICAO-FINANCIADORA'] ?? '');
+//                    $anoPatente = $this->sanitizeForWord($patente['ANO'] ?? ($patente['DATA-DE-PEDIDO-DE-DEPOSITO'] ?? ''));
+//
+//                    // Extração de autores (mesma lógica segura e sanitizada)
+//                    $autores = [];
+//                    if (!empty($patente['AUTORES']) && is_array($patente['AUTORES'])) {
+//                        foreach ($patente['AUTORES'] as $autor) {
+//                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
+//                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
+//                            
+//                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
+//                                    ? $nomeCompleto 
+//                                    : $nomeCitacao;
+//                            
+//                            if (!empty($nome)) {
+//                                $autores[] = $this->sanitizeForWord($nome);
+//                            }
+//                        }
+//                    }
+//                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Título: ', ['bold' => true]);
+//                    $textrun->addText($titulo);
+//
+//                    if (!empty($finalidade)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Finalidade: ', ['bold' => true]);
+//                        $textrun->addText($finalidade);
+//                    }
+//
+//                    if (!empty($instituicao)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                        $textrun->addText('Instituição Financiadora: ', ['bold' => true]);
+//                        $textrun->addText($instituicao);
+//                    }
+//
+//                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
+//                    $textrun->addText('Autores: ', ['bold' => true]);
+//                    $textrun->addText($autoresStr);
+//
+//                    if (!empty($anoPatente)) {
+//                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
+//                        $textrun->addText('Ano/Data: ', ['bold' => true]);
+//                        $textrun->addText($anoPatente);
+//                    } else {
+//                        $section->addTextBreak(1);
+//                    }
+//                }
+//            }
+//        }
+//        // Se nenhum docente teve patentes no ano, exibe mensagem
+//        if (!$temPatentesNoAno) {
+//            $section->addText("Nenhum registro de patente encontrado para o ano de {$ano}.", ['italic' => true, 'color' => '888888', 'spaceAfter' => 200]);
+//        }
         
-        // --- 3. CURSOS EXTRACURRICULARES ---
-        $section->addText('3. Cursos Extracurriculares', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-        $section->addText('3.1 Cursos Ministrados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            
-            // Busca cursos ministrados no ano específico
-            $cursos = $this->buscarCursosMinistradosPorAno($codpes, $ano);
-
-            if (!empty($cursos)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($cursos as $curso) {
-                    $titulo = $curso['TITULO'] ?? '';
-                    $instituicao = $curso['INSTITUICAO-PROMOTORA-DO-CURSO'] ?? '';
-                    $nivel = $curso['NIVEL-DO-CURSO'] ?? '';
-                    
-                    // Extração de autores (mesma lógica dos artigos)
-                    $autores = [];
-                    if (!empty($curso['AUTORES']) && is_array($curso['AUTORES'])) {
-                        foreach ($curso['AUTORES'] as $autor) {
-                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
-                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
-                            
-                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
-                                    ? $nomeCompleto 
-                                    : $nomeCitacao;
-                            
-                            if (!empty($nome)) {
-                                $autores[] = $nome;
-                            }
-                        }
-                    }
-                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Título: ', ['bold' => true]);
-                    $textrun->addText($titulo);
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Instituição Promotora: ', ['bold' => true]);
-                    $textrun->addText($instituicao ?: 'Não informada');
-
-                    if (!empty($nivel)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Nível do Curso: ', ['bold' => true]);
-                        $textrun->addText($nivel);
-                    }
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                    $textrun->addText('Ministrado por: ', ['bold' => true]);
-                    $textrun->addText($autoresStr);
-                }
-            }
-        }
-
-        // --- 3.2 Cursos Frequentados ---
-        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-
-            // Busca cursos frequentados do ano específico
-            $cursos = $this->buscarCursosFrequentadosPorAno($codpes, $ano);
-
-            if (!empty($cursos)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-
-                foreach ($cursos as $curso) {
-                    $titulo = $curso['NOME-CURSO'] ?? '';
-                    $instituicao = $curso['NOME-INSTITUICAO'] ?? '';
-                    $cargaHoraria = $curso['CARGA-HORARIA'] ?? '';
-                    $status = $curso['STATUS-DO-CURSO'] ?? '';
-                    $tipo = $curso['TIPO'] ?? '';
-
-                    // Título do curso
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Curso: ', ['bold' => true]);
-                    $textrun->addText($titulo);
-
-                    // Instituição
-                    if (!empty($instituicao)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Instituição: ', ['bold' => true]);
-                        $textrun->addText($instituicao);
-                    }
-
-                    // Carga horária
-                    if (!empty($cargaHoraria)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Carga Horária: ', ['bold' => true]);
-                        $textrun->addText($cargaHoraria . ' horas');
-                    }
-
-                    // Status
-                    if (!empty($status)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Status: ', ['bold' => true]);
-                        $textrun->addText($status);
-                    } else {
-                        $section->addTextBreak(1);
-                    }
-                }
-            }
-        }
         
-        // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
-        $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
+        // --- 11. CATEGORIA DE PESQUISADOR CNPq ---
+        $section->addText('11. Categoria de Pesquisador CNPq', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
 
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            
-            // Busca participações em eventos do ano específico
-            $eventos = $this->buscarEventosPorAno($codpes, $ano);
+        // Busca as categorias CNPq de todos os docentes do departamento de uma vez só (otimização)
+        $codpesLista = $docentes->pluck('codpes')->toArray();
+        $categoriasCnpq = $this->buscarCategoriasCnpq($codpesLista);
 
-            if (!empty($eventos)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($eventos as $evento) {
-                    $titulo = $evento['TITULO'] ?? '';
-                    $nomeEvento = $evento['NOME-DO-EVENTO'] ?? '';
-                    $instituicao = $evento['NOME-INSTITUICAO'] ?? '';
-                    $cidade = $evento['CIDADE-DO-EVENTO'] ?? '';
-                    $tipoParticipacao = $evento['TIPO-PARTICIPACAO'] ?? '';
+        // Mapeamento dos níveis (espelhando a constante do CnpqController)
+        $mapeamentoNiveis = [
+            '1A' => 'PQ-1A',
+            '1B' => 'PQ-1B',
+            '1C' => 'PQ-1C',
+            '1D' => 'PQ-1D',
+            '2'  => 'PQ-2',
+            'DT' => 'DT (Desenvolvimento Tecnológico)',
+        ];
 
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Título: ', ['bold' => true]);
-                    $textrun->addText($titulo);
+        // Cria uma tabela sem bordas para alinhar: categoria à esquerda, nome à direita
+        $tabela = $section->addTable([
+            'borderSize' => 0,
+            'cellMargin' => 80,
+            'width' => 9000,
+        ]);
 
-                    if (!empty($nomeEvento)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Evento: ', ['bold' => true]);
-                        $textrun->addText($nomeEvento);
-                    }
-
-                    if (!empty($instituicao)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Instituição: ', ['bold' => true]);
-                        $textrun->addText($instituicao);
-                    }
-
-                    if (!empty($cidade)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Local: ', ['bold' => true]);
-                        $textrun->addText($cidade);
-                    }
-
-                    if (!empty($tipoParticipacao)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Tipo de Participação: ', ['bold' => true]);
-                        $textrun->addText($tipoParticipacao);
-                    } else {
-                        $section->addTextBreak(1);
-                    }
-                }
-            }
-        }
-
-        // --- 5. PARTICIPAÇÃO EM CONSELHOS EDITORIAIS E CONGÊNERES ---
-        \Log::info('Iniciando seção 5 - Conselhos Editoriais');
-        $section->addText('5. Participação em Conselhos Editoriais e Congêneres', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-
-            \Log::info("Buscando conselhos editoriais para {$nomeDocente} (codpes: {$codpes})");
-
-            try {
-                $atuacoes = $this->buscarCorposEditoriaisPorAno($codpes, $ano);
-                \Log::info("Retornou " . (is_array($atuacoes) ? count($atuacoes) : '0') . " atuações");
-            } catch (\Exception $e) {
-                \Log::error("Erro ao buscar conselhos para {$nomeDocente}: " . $e->getMessage());
-                continue;
-            }
-
-            if (!empty($atuacoes)) {
-                $section->addText($this->sanitizeForWord($nomeDocente), ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-
-            foreach ($atuacoes as $index => $atuacao) {
-                try {
-                    // Aplica sanitização em todos os campos para remover & soltos, espaços extras e caracteres de controle
-                    $periodico = $this->sanitizeForWord($atuacao['NOME-PERIODICO'] ?? '');
-                    $tipoVinculo = $this->sanitizeForWord($atuacao['TIPO-VINCULO'] ?? '');
-                    $periodoInicio = $this->sanitizeForWord($atuacao['PERIODO-INICIO'] ?? '');
-                    $periodoFim = $this->sanitizeForWord($atuacao['PERIODO-FIM'] ?? '');
-
-                    \Log::info("Processando atuação {$index} para {$nomeDocente}: {$periodico}");
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Periódico/Órgão: ', ['bold' => true]);
-                    $textrun->addText($periodico);
-
-                    if (!empty($tipoVinculo)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Tipo de Vínculo: ', ['bold' => true]);
-                        $textrun->addText($tipoVinculo);
-                    }
-
-                    if (!empty($periodoInicio) || !empty($periodoFim)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Período: ', ['bold' => true]);
-                        // Garante que não haja " / atual" ou algo quebrado
-                        $periodoFormatado = trim("{$periodoInicio} a {$periodoFim}", " a");
-                        $textrun->addText($periodoFormatado);
-                    } else {
-                        $section->addTextBreak(1);
-                    }
-                } catch (\Exception $e) {
-                    \Log::error("Erro ao processar atuação {$index} para {$nomeDocente}: " . $e->getMessage());
-                    \Log::error("Dados brutos da atuação: " . json_encode($atuacao));
-                    continue;
-                }
-            }
-            }
-        }
-        \Log::info('Finalizada seção 5 - Conselhos Editoriais');       
-
-        // --- 8. PRÊMIOS E DISTINÇÕES ---
-        $section->addText('8. Prêmios e Distinções', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            
-            // A biblioteca retorna um array de strings formatadas ("Nome - Ano: XXXX") ou false
-            $premios = \Uspdev\Replicado\Lattes::listarPremios($codpes);
-
-            if (!empty($premios) && is_array($premios)) {
-                // Filtra apenas os prêmios do ano de referência do relatório
-                $premiosDoAno = array_filter($premios, function($premioStr) use ($ano) {
-                    return str_contains($premioStr, "- Ano: {$ano}");
-                });
-
-                if (!empty($premiosDoAno)) {
-                    $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                    
-                    foreach ($premiosDoAno as $premioStr) {
-                        // Separa a string "Título do Prêmio - Ano: 2023" em duas partes
-                        $partes = explode(' - Ano: ', $premioStr);
-                        $titulo = trim($partes[0] ?? 'Não informado');
-                        $anoPremio = trim($partes[1] ?? '');
-
-                        // Linha 1: Título em negrito
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Título: ', ['bold' => true]);
-                        $textrun->addText($titulo);
-
-                        // Linha 2: Ano em negrito + espaçamento maior no final do bloco
-                        if (!empty($anoPremio)) {
-                            $textrun = $section->addTextRun(['spaceAfter' => 200]); 
-                            $textrun->addText('Ano: ', ['bold' => true]);
-                            $textrun->addText($anoPremio);
-                        } else {
-                            $section->addTextBreak(1); // Espaçamento caso não tenha ano
-                        }
-                    }
-                }
-            }
-        }       
-        
-        // --- 9. ENTREVISTAS PARA DIVULGAÇÃO CIENTÍFICA ---
-        $section->addText('9. Entrevistas para Divulgação Científica', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        foreach ($docentes as $docente) {
-            $codpes = $docente['codpes'];
-            $nomeDocente = $docente['nompes'] ?? 'Docente';
-            
-            // Busca entrevistas/programas de TV/Rádio do ano específico
-            $entrevistas = $this->buscarEntrevistasPorAno($codpes, $ano);
-
-            if (!empty($entrevistas)) {
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($entrevistas as $entrevista) {
-                    $titulo = $entrevista['TITULO'] ?? '';
-                    $emissora = $entrevista['EMISSORA'] ?? '';
-                    $tema = $entrevista['TEMA'] ?? '';
-                    $data = $entrevista['DATA-DA-APRESENTACAO'] ?? '';
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Título: ', ['bold' => true]);
-                    $textrun->addText($titulo);
-
-                    if (!empty($emissora)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Emissora/Meio: ', ['bold' => true]);
-                        $textrun->addText($emissora);
-                    }
-
-                    if (!empty($tema)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Tema: ', ['bold' => true]);
-                        $textrun->addText($tema);
-                    }
-
-                    if (!empty($data)) {
-                        // Formata a data do Lattes (ddmmyyyy) para dd/mm/yyyy
-                        if (preg_match('/^(\d{2})(\d{2})(\d{4})$/', $data, $matches)) {
-                            $data = "{$matches[1]}/{$matches[2]}/{$matches[3]}";
-                        }
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Data: ', ['bold' => true]);
-                        $textrun->addText($data);
-                    } else {
-                        $section->addTextBreak(2); // Espaço caso não tenha data
-                    }
-                }
-            }
-        } 
-
-        // --- 10. PATENTES ---
-        $section->addText('10. Patentes', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-
-        $temPatentesNoAno = false; // Flag para verificar se há pelo menos uma patente no ano
+        $temAlgumaCategoria = false;
 
         foreach ($docentes as $docente) {
             $codpes = $docente['codpes'];
             $nomeDocente = $this->sanitizeForWord($docente['nompes'] ?? 'Docente');
-            
-            // Busca patentes do ano específico
-            $patentes = $this->buscarPatentesPorAno($codpes, $ano);
+            $nivelBruto = $categoriasCnpq[$codpes] ?? null;
 
-            if (!empty($patentes)) {
-                $temPatentesNoAno = true;
-                $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
-                
-                foreach ($patentes as $patente) {
-                    $titulo = $this->sanitizeForWord($patente['TITULO'] ?? '');
-                    $finalidade = $this->sanitizeForWord($patente['FINALIDADE'] ?? '');
-                    $instituicao = $this->sanitizeForWord($patente['INSTITUICAO-FINANCIADORA'] ?? '');
-                    $anoPatente = $this->sanitizeForWord($patente['ANO'] ?? ($patente['DATA-DE-PEDIDO-DE-DEPOSITO'] ?? ''));
+            // Só exibe se o docente tiver categoria CNPq cadastrada
+            if ($nivelBruto && isset($mapeamentoNiveis[$nivelBruto])) {
+                $temAlgumaCategoria = true;
+                $categoriaFormatada = $mapeamentoNiveis[$nivelBruto];
 
-                    // Extração de autores (mesma lógica segura e sanitizada)
-                    $autores = [];
-                    if (!empty($patente['AUTORES']) && is_array($patente['AUTORES'])) {
-                        foreach ($patente['AUTORES'] as $autor) {
-                            $nomeCompleto = $autor['NOME-COMPLETO-DO-AUTOR'] ?? false;
-                            $nomeCitacao = $autor['NOME-PARA-CITACAO'] ?? '';
-                            
-                            $nome = ($nomeCompleto && is_string($nomeCompleto) && !empty($nomeCompleto)) 
-                                    ? $nomeCompleto 
-                                    : $nomeCitacao;
-                            
-                            if (!empty($nome)) {
-                                $autores[] = $this->sanitizeForWord($nome);
-                            }
-                        }
-                    }
-                    $autoresStr = !empty($autores) ? implode('; ', $autores) : 'Não informado';
+                $linha = $tabela->addRow();
 
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Título: ', ['bold' => true]);
-                    $textrun->addText($titulo);
+                // Coluna 1: Categoria CNPq (alinhada à esquerda, em negrito e azul)
+                $celulaCat = $linha->addCell(1500, ['width' => 1500]);
+                $celulaCat->addText($categoriaFormatada, ['bold' => true, 'size' => 11, 'color' => '0056b3']);
 
-                    if (!empty($finalidade)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Finalidade: ', ['bold' => true]);
-                        $textrun->addText($finalidade);
-                    }
+                // Coluna 2: Nome do docente (alinhado à esquerda)
+                $celulaNome = $linha->addCell(7500, ['width' => 7500]);
+        $celulaNome->addText($nomeDocente, ['size' => 11]);
+    }
+}
 
-                    if (!empty($instituicao)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                        $textrun->addText('Instituição Financiadora: ', ['bold' => true]);
-                        $textrun->addText($instituicao);
-                    }
-
-                    $textrun = $section->addTextRun(['spaceAfter' => 80]);
-                    $textrun->addText('Autores: ', ['bold' => true]);
-                    $textrun->addText($autoresStr);
-
-                    if (!empty($anoPatente)) {
-                        $textrun = $section->addTextRun(['spaceAfter' => 200]);
-                        $textrun->addText('Ano/Data: ', ['bold' => true]);
-                        $textrun->addText($anoPatente);
-                    } else {
-                        $section->addTextBreak(1);
-                    }
-                }
-            }
-        }
-        // Se nenhum docente teve patentes no ano, exibe mensagem
-        if (!$temPatentesNoAno) {
-            $section->addText("Nenhum registro de patente encontrado para o ano de {$ano}.", ['italic' => true, 'color' => '888888', 'spaceAfter' => 200]);
-        }
+// Se nenhum docente tiver categoria CNPq
+if (!$temAlgumaCategoria) {
+    $section->addText("Nenhum docente com bolsa Pesquisador CNPq cadastrada no sistema.", ['italic' => true, 'color' => '888888', 'spaceAfter' => 200]);
+}
         
         // --- 6. Participação em Conselhos Editoriais e Congêneres ---
         $section->addText('6. Intercâmbio Científico', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
@@ -885,6 +939,38 @@ class RelatorioController extends Controller
 
         } catch (\Exception $e) {
             \Log::warning("Erro ao buscar patentes para {$codpes}: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Busca as categorias de Pesquisador CNPq cadastradas no sistema SARAH
+     * para uma lista de códigos de pessoa.
+     *
+     * @param array $codpesLista Lista de codpes
+     * @return array Array associativo [codpes => nivel_cnpq]
+     */
+    private function buscarCategoriasCnpq(array $codpesLista): array
+    {
+        if (empty($codpesLista)) {
+            return [];
+        }
+
+        try {
+            $resultados = \App\Models\User::whereIn('codpes', $codpesLista)
+                ->whereNotNull('nivel_cnpq')
+                ->select('codpes', 'nivel_cnpq')
+                ->get();
+
+            $categorias = [];
+            foreach ($resultados as $user) {
+                $categorias[$user->codpes] = $user->nivel_cnpq;
+            }
+
+            return $categorias;
+
+        } catch (\Exception $e) {
+            \Log::error("Erro ao buscar categorias CNPq: " . $e->getMessage());
             return [];
         }
     }
