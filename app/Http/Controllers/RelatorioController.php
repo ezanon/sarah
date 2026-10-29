@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Uspdev\Replicado\Pessoa;
+use Uspdev\Replicado\Lattes;
 use PhpOffice\PhpWord\PhpWord; // ✅ Importação do PHPWord
 
 class RelatorioController extends Controller
@@ -325,9 +326,56 @@ class RelatorioController extends Controller
             }
         }
 
-        // Espaço reservado para Cursos Frequentados (será implementado posteriormente)
-        $section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 300, 'spaceAfter' => 200]);
-        $section->addText('Em desenvolvimento', ['italic' => true, 'color' => 'FF0000', 'bold' => true]); 
+// --- 3.2 Cursos Frequentados ---
+$section->addText('3.2 Cursos Frequentados', ['bold' => true, 'size' => 13, 'color' => '333333', 'spaceBefore' => 150, 'spaceAfter' => 150]);
+
+foreach ($docentes as $docente) {
+    $codpes = $docente['codpes'];
+    $nomeDocente = $docente['nompes'] ?? 'Docente';
+    
+    // Busca cursos frequentados do ano específico
+    $cursos = $this->buscarCursosFrequentadosPorAno($codpes, $ano);
+
+    if (!empty($cursos)) {
+        $section->addText($nomeDocente, ['bold' => true, 'size' => 14, 'color' => '333333', 'spaceBefore' => 200, 'spaceAfter' => 100, 'underline' => 'single']);
+        
+        foreach ($cursos as $curso) {
+            $titulo = $curso['NOME-CURSO'] ?? '';
+            $instituicao = $curso['NOME-INSTITUICAO'] ?? '';
+            $cargaHoraria = $curso['CARGA-HORARIA'] ?? '';
+            $status = $curso['STATUS-DO-CURSO'] ?? '';
+            $tipo = $curso['TIPO'] ?? '';
+
+            // Título do curso
+            $textrun = $section->addTextRun(['spaceAfter' => 80]);
+            $textrun->addText('Curso: ', ['bold' => true]);
+            $textrun->addText($titulo);
+
+            // Instituição
+            if (!empty($instituicao)) {
+                $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                $textrun->addText('Instituição: ', ['bold' => true]);
+                $textrun->addText($instituicao);
+            }
+
+            // Carga horária
+            if (!empty($cargaHoraria)) {
+                $textrun = $section->addTextRun(['spaceAfter' => 80]);
+                $textrun->addText('Carga Horária: ', ['bold' => true]);
+                $textrun->addText($cargaHoraria . ' horas');
+            }
+
+            // Status
+            if (!empty($status)) {
+                $textrun = $section->addTextRun(['spaceAfter' => 200]);
+                $textrun->addText('Status: ', ['bold' => true]);
+                $textrun->addText($status);
+            } else {
+                $section->addTextBreak(1);
+            }
+        }
+    }
+}
         
         // --- 4. PARTICIPAÇÃO EM EVENTOS CIENTÍFICOS E CULTURAIS ---
         $section->addText('4. Participação em Eventos Científicos e Culturais', ['bold' => true, 'size' => 16, 'color' => '0056b3', 'spaceBefore' => 300, 'spaceAfter' => 200]);
@@ -540,6 +588,23 @@ class RelatorioController extends Controller
 
         } catch (\Exception $e) {
             \Log::warning("Erro ao buscar entrevistas para {$codpes}: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Busca cursos frequentados (formação complementar) no Lattes e filtra pelo ano selecionado
+     */
+    private function buscarCursosFrequentadosPorAno(string $codpes, int $ano): array
+    {
+        try {
+            // Usa o novo método que percorre todas as tags de FORMACAO-COMPLEMENTAR
+            $cursos = Lattes::listarFormacaoComplementar($codpes, $ano, $ano);
+
+            return $cursos ?: [];
+
+        } catch (\Exception $e) {
+            \Log::warning("Erro ao buscar cursos frequentados para {$codpes}: " . $e->getMessage());
             return [];
         }
     }
