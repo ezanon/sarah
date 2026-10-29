@@ -137,5 +137,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/{equipamento}', [EquipamentoController::class, 'update'])->name('update');
         Route::delete('/{equipamento}', [EquipamentoController::class, 'destroy'])->name('destroy');
     });
+    
+    // Relatórios da Diretoria
+    Route::middleware(['auth'])->prefix('painel-relatorios')->name('relatorios.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\RelatorioController::class, 'index'])->name('index');
+        Route::get('/criar', [\App\Http\Controllers\RelatorioController::class, 'create'])->name('create');
+        Route::post('/gerar', [\App\Http\Controllers\RelatorioController::class, 'store'])->name('store');
+    });
 
 });
