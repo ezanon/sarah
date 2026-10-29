@@ -11,6 +11,14 @@ $c_pesquisa = [
     ],
 ];
 
+$relatorios = [
+    [
+        'text' => 'Relatório dos Departamentos', 
+        'url' => '/painel-relatorios',
+        'can' => ['gaa', 'gmg']
+    ],
+];
+
 $admin = [
     [
         'text' => 'Salas',
@@ -25,13 +33,15 @@ $admin = [
         'text' => 'CPqI',
     ],
     ...$c_pesquisa,
-];
-
-$relatorios = [
+    // Relatorios
     [
-        'text' => 'Relatório dos Departamentos', 
-        'url' => '/painel-relatorios'
+        'type' => 'divider',
     ],
+    [
+        'type' => 'header',
+        'text' => 'Relatórios',
+    ],
+    ...$relatorios,
 ];
 
 $menu = [
@@ -52,6 +62,7 @@ $menu = [
     [
         'text' => 'Relatórios',
         'submenu' => $relatorios,
+        'can' => ['gaa', 'gmg', 'manager']
     ],
 ];
 
