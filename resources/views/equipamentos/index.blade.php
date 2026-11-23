@@ -31,11 +31,21 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title mb-0">{{ $eq->nome }}</h5>
-                            @if($eq->ativo)
-                                <span class="badge bg-success text-white">Ativo</span>
-                            @else
-                                <span class="badge bg-danger text-white">Inativo</span>
-                            @endif
+                            <div class="d-flex flex-column gap-1">
+                                {{-- Badge de Tipo --}}
+                                @if($eq->tipo === 'grande_porte')
+                                    <span class="badge bg-primary text-white mb-1">Grande Porte</span>
+                                @else
+                                    <span class="badge bg-secondary text-white mb-1">Periférico</span>
+                                @endif
+
+                                {{-- Badge de Status --}}
+                                @if($eq->ativo)
+                                    <span class="badge bg-success text-white">Ativo</span>
+                                @else
+                                    <span class="badge bg-danger text-white">Inativo</span>
+                                @endif
+                            </div>
                         </div>
 
                         {{-- Badges do Centro e Laboratório --}}

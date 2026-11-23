@@ -10,6 +10,7 @@ class Equipamento extends Model
         'laboratorio_id',
         'user_id',
         'nome',
+        'tipo',
         'marca',
         'modelo',
         'ano_aquisicao',
@@ -29,6 +30,12 @@ class Equipamento extends Model
         'valor' => 'decimal:2',
         'ano_aquisicao' => 'integer',
         'ano_incorporacao' => 'integer',
+    ];
+
+    // Constantes para os tipos de equipamento
+    public const TIPOS = [
+        'grande_porte' => 'Grande Porte',
+        'periferico'   => 'Periférico',
     ];
 
     public function laboratorio()
@@ -52,18 +59,12 @@ class Equipamento extends Model
             ->withTimestamps();
     }
 
-    /**
-     * Verifica se o usuário pode editar este equipamento
-     * (Criador, Responsável OU detentor da permissão c_pesquisa)
-     */
     public function podeEditar(User $user): bool
     {
-        // 1. Se tiver a permissão c_pesquisa, pode editar TUDO
         if ($user->hasPermissionTo('c_pesquisa')) {
             return true;
         }
 
-        // 2. Caso contrário, verifica se é o criador ou um dos responsáveis
         return $this->user_id === $user->id
             || $this->responsaveis()->where('user_id', $user->id)->exists();
     }
@@ -72,7 +73,7 @@ class Equipamento extends Model
     {
         return $this->foto ? asset("storage/{$this->foto}") : null;
     }
-    
+
     public function getValorFormatadoAttribute(): string
     {
         if (!$this->valor) {
@@ -90,5 +91,9 @@ class Equipamento extends Model
 
         return "{$simbolo} {$valor}";
     }
-    
+
+    public function getTipoFormatadoAttribute(): string
+    {
+        return self::TIPOS[$this->tipo] ?? ucfirst($this->tipo);
+    }
 }

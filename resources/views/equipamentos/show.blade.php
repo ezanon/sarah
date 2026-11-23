@@ -67,6 +67,14 @@
                             <div>{{ $equipamento->laboratorio->nome }}</div>
                         </li>
                         <li class="list-group-item"><strong>Marca/Modelo:</strong> {{ $equipamento->marca ?? '-' }} {{ $equipamento->modelo ? '(' . $equipamento->modelo . ')' : '' }}</li>
+                        <li class="list-group-item">
+                            <strong>Tipo:</strong>
+                            @if($equipamento->tipo === 'grande_porte')
+                                <span class="badge bg-primary text-white">Grande Porte</span>
+                            @else
+                                <span class="badge bg-secondary text-white">Periférico</span>
+                            @endif
+                        </li>
                         <li class="list-group-item"><strong>Patrimônio:</strong> {{ $equipamento->patrimonio ?? 'Não informado' }}</li>
                         <li class="list-group-item"><strong>Ano Aquisição:</strong> {{ $equipamento->ano_aquisicao ?? '-' }}</li>
                         <li class="list-group-item"><strong>Ano Incorporação:</strong> {{ $equipamento->ano_incorporacao ?? '-' }}</li>
