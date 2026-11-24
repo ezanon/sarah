@@ -18,10 +18,24 @@
         <label class="form-label fw-bold">Nome do Equipamento *</label>
         <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror" value="{{ old('nome', $equipamento->nome ?? '') }}" required>
         @error('nome') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
+    </div>    
 </div>
 
-<div class="mb-3">
+{{-- TIPO DO EQUIPAMENTO --}}
+<div class="form-group mb-3">
+    <label for="tipo">Tipo de Equipamento *</label>
+    <select name="tipo" id="tipo" class="form-control" required>
+        <option value="">-- Selecione o tipo --</option>
+        @foreach(\App\Models\Equipamento::TIPOS as $valor => $label)
+            <option value="{{ $valor }}" {{ (old('tipo', $equipamento->tipo ?? 'periferico') == $valor) ? 'selected' : '' }}>
+                {{ $label }}
+            </option>
+        @endforeach
+    </select>
+    @error('tipo') <span class="text-danger">{{ $message }}</span> @enderror
+</div> 
+
+<div class="form-group mb-3">
     
     <div id="aviso-preenchimento-automatico" class="alert alert-light border-start border-primary border-3 py-2 mt-0 mb-3" role="alert" style="display: none;">
         <small class="text-muted">
@@ -30,7 +44,7 @@
     </div>
     
     <label class="form-label fw-bold">Laboratório *</label>
-    <select name="laboratorio_id" class="form-select form-select-lg @error('laboratorio_id') is-invalid @enderror" required>
+    <select name="laboratorio_id" class="form-control form-select form-select-lg @error('laboratorio_id') is-invalid @enderror" required>
         <option value="">Selecione o laboratório...</option>
         @foreach($laboratorios as $lab)
             <option value="{{ $lab->id }}" {{ (old('laboratorio_id', $equipamento->laboratorio_id ?? '') == $lab->id) ? 'selected' : '' }}>
@@ -162,7 +176,7 @@
         </div>
         <div class="col-md-8">
             <label for="motivo_inativacao" class="form-label">Motivo da Inativação</label>
-            <select name="motivo_inativacao" id="motivo_inativacao" class="form-select">
+            <select name="motivo_inativacao" id="motivo_inativacao" class="form-control form-select">
                 <option value="">-- Selecione o motivo --</option>
                 <option value="obsoleto" {{ old('motivo_inativacao', $equipamento->motivo_inativacao ?? '') == 'obsoleto' ? 'selected' : '' }}>Obsoleto</option>
                 <option value="danificado" {{ old('motivo_inativacao', $equipamento->motivo_inativacao ?? '') == 'danificado' ? 'selected' : '' }}>Danificado</option>

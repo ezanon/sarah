@@ -79,6 +79,13 @@
                                         </div>
                                     </td>
                                     <td>
+                                        {{-- Badge de Tipo (G = Grande Porte, P = Periférico) --}}
+                                        @if($eq->tipo === 'grande_porte')
+                                            <span class="badge bg-primary text-white me-1" title="Grande Porte" style="font-size: 0.75rem;">G</span>
+                                        @else
+                                            <span class="badge bg-secondary text-white me-1" title="Periférico" style="font-size: 0.75rem;">P</span>
+                                        @endif
+
                                         <em>{{ $eq->nome }}</em>
                                         @if($eq->marca || $eq->modelo)
                                             <br>
