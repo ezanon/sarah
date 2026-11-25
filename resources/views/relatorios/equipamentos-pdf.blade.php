@@ -147,8 +147,15 @@
                                 <div class="sem-foto">Sem imagem<br>disponível</div>
                             @endif
                         </td>
-                        <td>
+                        <td>                          
+                            
                             <div class="nome">{{ $eq->nome }}</div>
+                            
+                            @if($eq->tipo === 'grande_porte')
+                                <div class="info"><strong>Tipo:</strong> Equipamento de grande porte</div>
+                            @else
+                                <div class="info"><strong>Tipo:</strong> Periférico</div>
+                            @endif
                             @if($eq->patrimonio)
                                 <div class="info"><strong>Patrimônio:</strong> {{ $eq->patrimonio }}</div>
                             @endif

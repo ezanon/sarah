@@ -1,55 +1,54 @@
-<?php
-
-$c_pesquisa = [
-    [
-        'text' => 'Centros e Labs',
-        'url'  => '/equipamentos/admin', 
-    ],
-    [
-        'text' => 'Equipamentos',
-        'url'  => '/equipamentos/admin/equipamentos', 
-    ],
-];
-
-$relatorios = [
-    [
-        'text' => 'Relatório dos Departamentos', 
-        'url' => '/painel-relatorios',
-        'can' => ['gaa', 'gmg']
-    ],
-];
-
-$admin = [
-    [
-        'text' => 'Salas',
-        'url'  => '/minhasala/admin', 
-    ],
-    // CPqI
-    [
-        'type' => 'divider',
-    ],
-    [
-        'type' => 'header',
-        'text' => 'CPqI',
-    ],
-    ...$c_pesquisa,
-    // Relatorios
-    [
-        'type' => 'divider',
-    ],
-    [
-        'type' => 'header',
-        'text' => 'Relatórios',
-    ],
-    ...$relatorios,
-];
-
-$menu = [
-    [
-        # este item de menu será substituido no momento da renderização
-        'key' => 'menu_dinamico',
-    ],
-    [
+<?php                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                             
+$c_pesquisa = [                                                                                                                                                                                                                                                                                                                                              
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'text' => 'Centros e Labs',                                                                                                                                                                                                                                                                                                                          
+        'url'  => '/equipamentos/admin',                                                                                                                                                                                                                                                                                                                     
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'text' => 'Equipamentos',                                                                                                                                                                                                                                                                                                                            
+        'url'  => '/equipamentos/admin/equipamentos',                                                                                                                                                                                                                                                                                                        
+    ],                                                                                                                                                                                                                                                                                                                                                       
+];                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                             
+$relatorios = [                                                                                                                                                                                                                                                                                                                                              
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'text' => 'Relatório dos Departamentos',                                                                                                                                                                                                                                                                                                             
+        'url' => '/painel-relatorios',                                                                                                                                                                                                                                                                                                                       
+    ],                                                                                                                                                                                                                                                                                                                                                       
+];                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                             
+$admin = [                                                                                                                                                                                                                                                                                                                                                   
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'text' => 'Salas',                                                                                                                                                                                                                                                                                                                                   
+        'url'  => '/minhasala/admin',                                                                                                                                                                                                                                                                                                                        
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    // CPqI                                                                                                                                                                                                                                                                                                                                                  
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'type' => 'divider',                                                                                                                                                                                                                                                                                                                                 
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'type' => 'header',                                                                                                                                                                                                                                                                                                                                  
+        'text' => 'CPqI',                                                                                                                                                                                                                                                                                                                                    
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    ...$c_pesquisa,                                                                                                                                                                                                                                                                                                                                          
+    // Relatorios                                                                                                                                                                                                                                                                                                                                            
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'type' => 'divider',                                                                                                                                                                                                                                                                                                                                 
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    [                                                                                                                                                                                                                                                                                                                                                        
+        'type' => 'header',                                                                                                                                                                                                                                                                                                                                  
+        'text' => 'Relatórios',                                                                                                                                                                                                                                                                                                                              
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    ...$relatorios,                                                                                                                                                                                                                                                                                                                                          
+];                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                                                                                                             
+$menu = [                                                                                                                                                                                                                                                                                                                                                    
+    [                                                                                                                                                                                                                                                                                                                                                        
+        # este item de menu será substituido no momento da renderização                                                                                                                                                                                                                                                                                      
+        'key' => 'menu_dinamico',                                                                                                                                                                                                                                                                                                                            
+    ],                                                                                                                                                                                                                                                                                                                                                       
+    [                                                                                                                                                                                                                                                                                                                                                        
         'text' => 'Admin',
         'submenu' => $admin,
         'can' => 'admin',
@@ -62,7 +61,7 @@ $menu = [
     [
         'text' => 'Relatórios',
         'submenu' => $relatorios,
-        'can' => ['gaa', 'gmg', 'manager']
+        'can' => ['gaa', 'gmg'],
     ],
 ];
 
