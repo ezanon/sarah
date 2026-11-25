@@ -236,14 +236,20 @@
         <div class="relatorio-equipamentos">
 <!--            <h1>🔬 Equipamentos de Grande Porte - IGC USP</h1>-->
             
-            {{-- ✅ Botão para o PDF (só aparece se o arquivo existir) --}}
-            @if(file_exists(public_path('relatorios/equipamentos.pdf')))
-                <div style="text-align: right; margin: -20px 0 25px 0;">
-                    <a href="{{ asset('relatorios/equipamentos.pdf') }}" target="_blank" class="pdf-button">
-                        📄 Versão em PDF
-                    </a>
-                </div>
-            @endif            
+            <div style="text-align: right; margin: -20px 0 25px 0;">    
+                {{-- ✅ Botão para o PDF (só aparece se o arquivo existir) --}}
+                @if(file_exists(public_path('relatorios/equipamentos.pdf')))
+                        <a href="{{ asset('relatorios/equipamentos.pdf') }}" target="_blank" class="pdf-button mr-1">
+                            📄 Ver em PDF
+                        </a>
+                @endif     
+                {{-- ✅ Botão para o XLSX (só aparece se o arquivo existir) --}}
+                @if(file_exists(public_path('relatorios/equipamentos.xlsx')))
+                        <a href="{{ asset('relatorios/equipamentos.xlsx') }}" target="_blank" class="pdf-button">
+                            📄 Ver em Excel
+                        </a>
+                @endif 
+            </div>
 
             @foreach($agrupados as $centroId => $laboratorios)
             @php
@@ -283,6 +289,18 @@
                 </div>
                 <div class="equipamento-dados">
                     <div class="equipamento-nome">{{ $eq->nome }}</div>
+                    @if($eq->tipo)
+                        <div class="equipamento-info">
+                            <strong>Tipo:</strong>
+                            @if($eq->tipo === 'grande_porte')
+                                Equipamento de grande porte
+                            @elseif($eq->tipo === 'periferico')
+                                Periférico
+                            @else
+                                {{ ucfirst(str_replace('_', ' ', $eq->tipo)) }}
+                            @endif
+                        </div>
+                    @endif
                     @if($eq->patrimonio)
                     <div class="equipamento-info">
                         <strong>Patrimônio:</strong>
