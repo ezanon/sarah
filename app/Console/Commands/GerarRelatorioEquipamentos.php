@@ -11,6 +11,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Uspdev\Replicado\Bempatrimoniado;
 
 class GerarRelatorioEquipamentos extends Command
 {
@@ -109,7 +110,7 @@ class GerarRelatorioEquipamentos extends Command
             'L' => 'Financiamento',
             'M' => 'Proc. Convênio',
             'N' => 'Proc. Incorporação',
-            'O' => 'Responsáveis',
+            'O' => 'Responsável',
         ];
 
         $linha = 4; // começa na linha 4 (depois do título)
@@ -122,9 +123,14 @@ class GerarRelatorioEquipamentos extends Command
         }
         // Força as colunas de Patrimônio (D), Proc. Convênio (M) e Proc. Incorporação (N) a serem tratadas como TEXTO
         $formatoTexto = \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT;
-        $sheet->getStyle('D:D')->getNumberFormat()->setFormatCode($formatoTexto);
-        $sheet->getStyle('M:M')->getNumberFormat()->setFormatCode($formatoTexto);
-        $sheet->getStyle('N:N')->getNumberFormat()->setFormatCode($formatoTexto);
+        $sheet->getStyle('D:D,M:M,N:N')
+                ->getNumberFormat()
+                ->setFormatCode($formatoTexto);
+        
+        // Colunas centralizadas
+        $sheet->getStyle('D:D,H:H,I:I,L:L,M:M,N:N')
+            ->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         // Estilo do cabeçalho
         $sheet->getStyle("A{$linha}:O{$linha}")->applyFromArray([
@@ -152,7 +158,6 @@ class GerarRelatorioEquipamentos extends Command
         // --- Dados ---
         $linhaAtual = $linha;
         foreach ($equipamentos as $eq) {
-            $responsaveis = $eq->responsaveis->pluck('name')->implode(', ') ?: '-';
 
             $sheet->setCellValue("A{$linha}", $eq->laboratorio->centro->sigla ?? '-');
             $sheet->setCellValue("B{$linha}", $eq->laboratorio->sigla ?? '-');
@@ -183,11 +188,49 @@ class GerarRelatorioEquipamentos extends Command
                 $sheet->setCellValue("J{$linha}", '-');
             }
             
-            $sheet->setCellValue("K{$linha}", $eq->moeda ?? 'BRL');
+            // Só exibe a moeda se houver valor preenchido
+            if ($eq->valor && $eq->valor > 0) {
+                $sheet->setCellValue("K{$linha}", $eq->moeda ?? 'BRL');
+            } else {
+                $sheet->setCellValue("K{$linha}", '-');
+            }
+            
             $sheet->setCellValue("L{$linha}", $eq->financiamento ?? '-');
             $sheet->setCellValue("M{$linha}", $eq->cod_processo_convenio ?? '-');
             $sheet->setCellValue("N{$linha}", $eq->cod_processo_incorporacao ?? '-');
-            $sheet->setCellValue("O{$linha}", $responsaveis);
+
+            // Busca o responsável pelo patrimônio no Replicado
+            $responsavelNome = '-';
+            if (!empty($eq->patrimonio)) {
+                try {
+                    // Remove caracteres não numéricos do patrimônio (pontos, etc.)
+                    $patrimonioLimpo = preg_replace('/\D/', '', $eq->patrimonio);
+
+                    if (!empty($patrimonioLimpo)) {
+                        // Busca os dados do bem no Replicado
+                        $dadosBem = Bempatrimoniado::dump($patrimonioLimpo);
+
+                        // O dump retorna um array; pegamos o primeiro elemento
+                        $bem = is_array($dadosBem) ? ($dadosBem[0] ?? $dadosBem) : $dadosBem;
+
+                        // Pega o codpes do responsável
+                        $codpesResponsavel = $bem['codpes'] ?? null;
+
+                        if (!empty($codpesResponsavel)) {
+                            // Busca o nome completo pelo número USP
+                            $nomeResponsavel = \Uspdev\Replicado\Pessoa::nomeCompleto($codpesResponsavel);
+                            if (!empty($nomeResponsavel)) {
+                                $responsavelNome = $nomeResponsavel;
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Se der erro, mantém "-" (silencioso para não quebrar o relatório)
+                    $responsavelNome = '-';
+                }
+            }
+
+            $sheet->setCellValue("O{$linha}", $responsavelNome);
 
             // Cor de fundo alternada para facilitar leitura
             if (($linha - $linhaAtual) % 2 === 0) {
